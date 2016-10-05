@@ -140,7 +140,7 @@ FA#C</textarea>
       $("#go_button").on("click", function(){
         var res_ary = [];
         $("#elements_list").val().split("\n").forEach(function(e){
-            res_ary.push(findChord(e)["code"]);
+            res_ary.push(findChord(e));
         });
         $("#result_list").val(res_ary.join("\n"))
       });
