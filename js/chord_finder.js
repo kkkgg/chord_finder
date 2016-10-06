@@ -18,10 +18,8 @@ function rotateArray(arr, num, reverse){
 
 function findChord(code_str){
 	// TODO 全角半角変換、半角カナ変換
-	code_str = code_str.replace(/[ 　\/]+/g, "");
-	if(!code_str) return {"elements":"", "code":""};
 	code_str = code_str.toLowerCase();
-	code_str = code_str.replace(/＃/g, "#");
+	code_str = code_str.replace(/[＃♯]/g, "#");
 	code_str = code_str.replace(/ド/g, "c");
 	code_str = code_str.replace(/レ/g, "d");
 	code_str = code_str.replace(/ミ/g, "e");
@@ -29,8 +27,11 @@ function findChord(code_str){
 	code_str = code_str.replace(/ソ/g, "g");
 	code_str = code_str.replace(/ラ/g, "a");
 	code_str = code_str.replace(/シ/g, "b");
-	var code_ary = code_str.match(/.[#♭]?/g);
 	// TODO 異常文字の無視、許可された文字以外は無視
+	//code_str = code_str.replace(/[ 　\/]+/g, "");
+	code_str = code_str.replace(/[^cdefgab♭#]+/g, "");
+	if(!code_str) return "";
+	var code_ary = code_str.match(/.[#♭]?/g);
 
 	var code2num = {
 		"c":  0,
@@ -136,19 +137,46 @@ function findChord(code_str){
 		// 基礎和音にはまるか判定
 		{
 			var str2chord = {
+				// 三和音
 				"0,4,7": "",
 				"0,3,7": "m",
+				"0,4,8": "aug",
+				"0,3,6": "m♭5", // dim
+				"0,5,7": "sus4",
+				"0,2,7": "sus2", // xx sus4/xx
+				
+				// 四和音
 				"0,4,7,10": "7",
 				"0,3,7,10": "m7",
 				"0,4,7,11": "M7",
+				"0,3,7,11": "mM7",
 				"0,4,7,9": "6",
 				"0,3,7,9": "m6",
-				"0,5,7": "sus4",
-				"0,2,7": "sus2", // xx sus4/xx
-				"0,4,8": "aug",
-				"0,3,6": "m♭5", // dim
-				"0,3,6,9": "dim", // dim7
+				"0,3,6,9": "dim7",
 				"0,2,3,7": "add9",
+				"0,3,6,10": "m7♭5",
+				"0,5,7,10": "7sus4",
+
+				// テンション5
+				"0,2,4,7,10": "9",
+				"0,3,4,7,10": "+9",
+				"0,2,3,7,10": "m9",
+				"0,2,4,7,11": "M9",
+				"0,2,4,7,9": "69",
+				"0,2,3,7,9": "m69",
+
+				// テンション6
+				"0,2,4,5,7,10": "11",
+				"0,2,4,6,7,10": "+11",
+				"0,2,3,5,7,10": "m11",
+				"0,2,3,6,7,10": "m+11",
+
+				// テンション7
+				"0,2,4,5,7,9,10": "13",
+				"0,2,4,5,7,8,10": "-13",
+				"0,2,3,5,7,9,10": "m13",
+				"0,2,3,5,7,8,10": "m-13",
+
 				// ここへ全組み合わせを記述しておけばよい！？、組み合わせ数は？
 			};
 			var chord = str2chord[rel_num_ary.join(",")];

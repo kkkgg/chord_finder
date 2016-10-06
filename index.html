@@ -87,8 +87,21 @@
 ソシレ
 ミ♭ラ♭シ♭
 cegb
-FA#C</textarea>
+FA#C
+cegb♭e♭
+ドミソシ
+レ　ドミソ
+ド　ソレファ#
+レ　ドレラ
+ミレ♭ミシ♭
+ミ♭レ♭ファソ
+ドレラ
+ファソシ
+ソレファ#
+ファソド#
+</textarea>
         </div>
+        <!-- TODO リセットボタン -->
         <a class="btn btn-large btn-success" href="#" id="go_button">判定</a>
         <div class="form-group">
           <label for="comment">判定結果:</label>
@@ -98,27 +111,21 @@ FA#C</textarea>
 
       <hr>
 
-      <div class="row-fluid marketing" style="display:none">
+      <div class="row-fluid marketing" >
         <div class="span6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <h4>用途、目的、何用か</h4>
+          <p>このアプリは、耳コピや作曲で記譜を行う際に、コード名が不明なとき、和音のコード名付与を助け、効率的で品質の良いコード譜作成を目的として開発しています。</p>
+          <p>響きを大切にするため、へたに類似コードや簡単なコードに略さず、正確性と伝達性のバランスをとったものを目指しています。</p>
+          <h4>オンコード(分数コード)対応</h4>
+          <p>オンコードに対応したよいコード判別機が見つからなかったため、開発しました。</p>
         </div>
 
         <div class="span6">
-          <h4>Subheading</h4>
-          <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
-
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <h4>オンコードとコード譜</h4>
+          <p>多くのコード判別ツールは、オンコードを無視します。例えば、シレソはGと判定します。</p>
+          <p>楽曲の和声の流れは、ベースが肝になるため、正しいベース音を付与したコードで採譜する必要があります。</p>
+          <p>例えば曲の流れの中で出現するレドミソをCadd9と採譜してしまうと、原曲とは響きが異なるものになります。</p>
+          <p>この場合の、シ|シレソは、ベースを加味してG/Bが正解となります。</p>
         </div>
       </div>
 
@@ -140,7 +147,7 @@ FA#C</textarea>
       $("#go_button").on("click", function(){
         var res_ary = [];
         $("#elements_list").val().split("\n").forEach(function(e){
-            res_ary.push(findChord(e));
+            res_ary.push(findChord(e) + "\t\t\t" + e);
         });
         $("#result_list").val(res_ary.join("\n"))
       });
