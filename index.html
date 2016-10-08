@@ -83,36 +83,49 @@
         <p class="lead">構成音からコードを判定します。</p>
         <div class="form-group">
           <label for="comment">構成音:</label>
-          <textarea class="form-control" rows="5" id="elements_list" style="width:70%">
+          <textarea class="form-control" rows="9" id="elements_list" style="width:80%">
 ソシレ
 ミ♭ラ♭シ♭
-cegb
+ドミソシ
+
 FA#C
 cegb♭e♭
-ドミソシ
+
 レ　ドミソ
 ド　ソレファ#
 レ　ドレラ
 ミレ♭ミシ♭
 ミ♭レ♭ファソ
+
 ドレラ
 ファソシ
 ソレファ#
 ファソド#
 
 サンダーバード
-5   d      a      e?            f#  a# c#
-4  c#     g#   c#             e      b    e  g
-3    d#     a#   d#              g   b  d
-2   d      a    d               f g#  c    f  g#  c
+5: d a e? f# a# c#
+4: c# g# c# e b e g
+3: d# a# d# g b d
+2: d a d f g# c f g# c
 </textarea>
+        <ul>
+          <li>※低い方から構成音を記述します。レファ#ラでもdf#aでもOK</li>
+          <li>※改行区切りで入力すると、複数のコードを一括で判定できます</li>
+        </ul>
         </div>
         <!-- TODO リセットボタン -->
-        <a class="btn btn-large btn-success" href="#" id="go_button">判定</a>
-        <div class="form-group">
-          <label for="comment">判定結果:</label>
-          <textarea class="form-control" rows="5" id="result_list" style="width:70%"></textarea>
-        </div>
+        <a class="btn btn-large btn-primary" href="#" id="go_button">判定</a>
+        <a class="btn btn-large btn-default" href="#" id="reset_button">リセット</a>
+      </div>
+
+      <hr>
+
+      <div id="result_area" class="form-group" style="display:none">
+        <h4>判定結果:</h4>
+        <!--
+        <textarea class="form-control" rows="5" id="result_list" style="width:70%"></textarea>
+        -->
+        <div id="result_box"></div>
       </div>
 
       <hr>
@@ -128,10 +141,10 @@ cegb♭e♭
 
         <div class="span6">
           <h4>オンコードとコード譜</h4>
-          <p>多くのコード判別ツールは、オンコードを無視します。例えば、シレソはGと判定します。</p>
-          <p>楽曲の和声の流れは、ベースが肝になるため、正しいベース音を付与したコードで採譜する必要があります。</p>
-          <p>例えば曲の流れの中で出現するレドミソをCadd9と採譜してしまうと、原曲とは響きが異なるものになります。</p>
-          <p>この場合の、シ|シレソは、ベースを加味してG/Bが正解となります。</p>
+          <!-- <p>多くのコード判別ツールは、オンコードを無視します。例えば、低い方からレドミソをCadd9やD7(9)(11)と判定します。</p> -->
+          <p>コード譜のように楽曲を和声の流れとしてとらえる場合は、ベース音が肝になるため、正しいベース音を付与したコードで採譜する必要があります。</p>
+          <p>例えば曲の流れの中で出現する低い方からのレドミソをCadd9と採譜してしまうと、原曲とは響きが異なるものになります。</p>
+          <p>この場合のレドミソは、ベースを加味してC/Dが正解となります。</p>
         </div>
       </div>
 
@@ -150,12 +163,33 @@ cegb♭e♭
     <script src="js/bootstrap.min.js"></script>
     <script src="js/chord_finder.js"></script>
     <script>
+      // TODO インクリメンタルサーチ
       $("#go_button").on("click", function(){
-        var res_ary = [];
+        // var res_ary = [];
+        var res_table = $('<table class="table table-striped table-sm">');
+        res_table.append(
+          $("<tr>")
+            .append($("<th>").text("構成音"))
+            .append($("<th>").text("コード名"))
+        );
+        var tbody = $("<tbody>");
+        res_table.append(tbody);
         $("#elements_list").val().split("\n").forEach(function(e){
-            res_ary.push(findChord(e) + "\t\t\t" + e);
+            // res_ary.push(findChord(e) + "\t\t\t" + e);
+            tbody.append($("<tr>")
+              .append($("<td>").text(e))
+              .append($("<td>").text(findChord(e)))
+            );
         });
-        $("#result_list").val(res_ary.join("\n"))
+        $("#result_box").empty().append(res_table);
+        $("#result_area").show();
+        // コピペしやすいようにc-a効くエリアが望ましい
+        // $("#result_list").val(res_ary.join("\n"))
+      });
+      $("#reset_button").on("click", function(){
+        $("#elements_list").val("");
+        $("#result_area").hide();
+        // $("#result_list").val("");
       });
     </script>
 

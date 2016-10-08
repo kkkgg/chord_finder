@@ -80,9 +80,12 @@ function generateChordList(){
 	// 重なっている場合加えない、それぞれ独立
 	var tension_ary1 = [
 		[null, ""],
-		[1, "add-9"],
-		[2, "add9"],
-		[3, "add+9"],
+		// [1, "add-9"],
+		// [2, "add9"], // トライアドに足すときはこっち
+		// [3, "add+9"],
+		[1, "(-9)"],
+		[2, "(9)"],
+		[3, "(+9)"],
 	];
 	var tension_ary2 = [
 		[null, ""],
@@ -210,6 +213,12 @@ function findChord(chord_str){
 			return res;
 		}
 	});
+
+	var regex1 = /(omit\d+)/g;
+	var moving_targets = res.match(regex1);
+	if( moving_targets ){
+		res = res.replace(regex1, "") + moving_targets.join("");
+	}
 
 	return res;
 
