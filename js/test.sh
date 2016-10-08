@@ -3,6 +3,8 @@ aaa(){
 	cat test/3.txt | node chord_finder.js > test_20161006/3.txt
 
 
+    # 集計
+    for F in test*/result_score.txt; do cat $F | perl -lanE 'BEGIN{$ok=0;$all=0}/(\d+)\/(\d+)/;$ok+=$1;$all+=$2;$all++;END{say "$ok/$all"}'; done
 
 	# finding
 
