@@ -106,20 +106,37 @@ function generateChordList(){
 	tmp_ary = productArray(tmp_ary, tension_ary1);
 	tmp_ary = productArray(tmp_ary, tension_ary2);
 	tmp_ary = productArray(tmp_ary, tension_ary3);
+
+	var regex1 = /(omit\d)/g;
+	tmp_ary = tmp_ary.map(function(e){
+		// omit記述は末尾に付け替え
+		var moving_targets = e[1].match(regex1);
+		if( moving_targets ){
+			return [
+				e[0],
+				e[1].replace(regex1, "") + moving_targets.join("")
+			];
+		}
+		else return e;
+	});
 	return tmp_ary;
 }
 
+
+// 文字列か文字列の配列で返る
 function findChord(chord_str){
-	// TODO 全角半角変換、半角カナ変換
+	// コメント行
+	chord_str = chord_str.replace(/'.*$/g, "");
+	// ♪♩♫♬
 	chord_str = chord_str.toLowerCase();
-	chord_str = chord_str.replace(/[＃♯]/g, "#");
-	chord_str = chord_str.replace(/ド/g, "c");
-	chord_str = chord_str.replace(/レ/g, "d");
-	chord_str = chord_str.replace(/ミ/g, "e");
-	chord_str = chord_str.replace(/ファ/g, "f");
-	chord_str = chord_str.replace(/ソ/g, "g");
-	chord_str = chord_str.replace(/ラ/g, "a");
-	chord_str = chord_str.replace(/シ/g, "b");
+	chord_str = chord_str.replace(/[＃♯﹟]/g, "#");
+	chord_str = chord_str.replace(/[ドＣｃ]|ﾄﾞ/g, "c");
+	chord_str = chord_str.replace(/[レﾚＤｄ]/g, "d");
+	chord_str = chord_str.replace(/[ミﾐＥｅ]/g, "e");
+	chord_str = chord_str.replace(/[Ｆｆ]|ファ|ﾌｧ/g, "f");
+	chord_str = chord_str.replace(/[ソｿＧｇ]/g, "g");
+	chord_str = chord_str.replace(/[ラﾗＡａ]/g, "a");
+	chord_str = chord_str.replace(/[シｼＢｂ]/g, "b");
 	// TODO 異常文字の無視、許可された文字以外は無視
 	//chord_str = chord_str.replace(/[ 　\/]+/g, "");
 	chord_str = chord_str.replace(/[^cdefgab♭#]+/g, "");
@@ -180,10 +197,10 @@ function findChord(chord_str){
 	}
 	
 
-	var res = "?";
-	["standard","generated"].forEach(function(map_type){
+	var res = null;
+	["standard","generated1","generated2"].forEach(function(map_type){
 		// 判定
-		if(res.match(/\?/)){
+		if(res == null){
 			res = find(chord_ary, map_type);
 		}
 		else{
@@ -193,35 +210,64 @@ function findChord(chord_str){
 		root = chord_ary[0];
 
 		// ベース音をとって判定
-		if(res.match(/\?/)){
-			res = (function(){
-				var tmp_chord_ary = [].concat(chord_ary);
-				tmp_chord_ary.shift();
-				return find_with_rotate(tmp_chord_ary, root, map_type);
-			})();
+		function rotate_and_onbase(){
+			var tmp_chord_ary = [].concat(chord_ary);
+			tmp_chord_ary.shift();
+			return find_with_rotate(tmp_chord_ary, root, map_type);
+		};
+		if(res == null){
+			res = rotate_and_onbase();
+		}
+		else if(map_type == "generated2"){
+			res = [].concat(res,rotate_and_onbase());
 		}
 		else{
 			return res;
 		}
 
 		// 転回して判定
-		if(res.match(/\?/)){
+		if(res == null){
 			// 転回でマッチした場合はオンベースとする
 			res = find_with_rotate(chord_ary, root, map_type);
+		}
+		else if(map_type == "generated2"){
+			res = [].concat(res, find_with_rotate(chord_ary, root, map_type));
 		}
 		else{
 			return res;
 		}
 	});
 
-	var regex1 = /(omit\d+)/g;
-	var moving_targets = res.match(regex1);
-	if( moving_targets ){
-		res = res.replace(regex1, "") + moving_targets.join("");
+	// 戻り値が複数の場合、コレじゃないものを除去
+	if(res instanceof Array){
+		var max = -9999;
+		var score_ary = res.map(function(e){
+			// omit は 3点減点
+			var m = e.match(/omit/g);
+			var score = 0 - (m ? m.length * 3 : 0);
+			// (9)などのテンションは2点減点
+			var m2 = e.match(/\(/g);
+			score = score - (m2 ? m2.length * 2 : 0);
+			// オンコードは1点減点
+			var m3 = e.match(/\//g);
+			score = score - (m3 ? m3.length : 0);
+			if(score > max) max = score;
+			return score;
+		});
+		console.log(chord_str);
+		console.log(res);
+		console.log(score_ary);
+		res = res.filter(function(e, i){
+			return score_ary[i] == max;
+		});
+		console.log(res);
+		console.log("");
 	}
+		
 
 	return res;
 
+	// 文字列か文字列の配列で返る
 	function find(chord_ary, map_type){
 		// midiノートにする。左のCを36として計算
 		var num_ary = [];
@@ -294,39 +340,85 @@ function findChord(chord_str){
 					"0,2,3,5,7,9,10": "m13",
 					"0,2,3,5,7,8,10": "m-13",
 
+					// その他
+					"0,3,4,10": "+9[omit5] ジミヘンコード",
+
 					// ここへ全組み合わせを記述しておけばよい！？、組み合わせ数は？
 				};
 			}
-			else if(map_type == "generated"){
-				// 生成コードで判定
-				if(arguments.callee.generatedChordMap == null){
+			else if(map_type == "generated1"){
+				// 生成コード(omitなし)で判定
+				if(arguments.callee.generated1ChordMap == null){
 					var map = {};
 					generateChordList().forEach(function(e){
-						map[e[0].sort(function(a,b){return a-b}).join(",")] = e[1];
+						if(e[1].match(/omit/)) return;
+						var key = e[0].sort(function(a,b){return a-b}).join(",");
+						var val = map[key];
+						if(val){
+							map[key] = [].concat(val,e[1]);
+						}
+						else{
+							map[key] = e[1];
+						}
 					});
-					arguments.callee.generatedChordMap = map;
+					arguments.callee.generated1ChordMap = map;
 				}
-				chord_map = arguments.callee.generatedChordMap;
+				chord_map = arguments.callee.generated1ChordMap;
 			}
-			var chord = chord_map[rel_num_ary.join(",")];
-			var result = chord_ary[0].toUpperCase() + (chord == null ? "?" : chord);
+			else if(map_type == "generated2"){
+				// 生成コード(omitあり)で判定
+				if(arguments.callee.generated2ChordMap == null){
+					var map = {};
+					generateChordList().forEach(function(e){
+						var key = e[0].sort(function(a,b){return a-b}).join(",");
+						var val = map[key];
+						if(val){
+							map[key] = [].concat(val,e[1]);
+						}
+						else{
+							map[key] = e[1];
+						}
+					});
+					arguments.callee.generated2ChordMap = map;
+				}
+				chord_map = arguments.callee.generated2ChordMap;
+			}
+			var chords = chord_map[rel_num_ary.join(",")];
+			var result;
+			if(chords == null){
+				result = null;
+			}
+			else if(chords instanceof Array){
+				result = chords.map(function(e){
+					return chord_ary[0].toUpperCase() + e;
+				});
+			}
+			else{
+				result = chord_ary[0].toUpperCase() + chords;
+			}
 		}
-		
+
 		return result;
 	}
 
+	// 文字列か文字列の配列で返る
 	function find_with_rotate(chord_ary, root, map_type){
 		var tmp_chord_ary = [].concat(chord_ary);
 		for(var i=0; i<tmp_chord_ary.length-1; i++){
 			rotateArray(tmp_chord_ary, 1);
 			res = find(tmp_chord_ary, map_type);
-			if(res.match(/\?/)){
+			if(res == null){
+			}
+			else if(res instanceof Array){
+				return res.map(function(e){
+					return e + "/" + root.toUpperCase();
+				});
 			}
 			else{
 				return res + "/" + root.toUpperCase();
 			}
 		}
-		return root.toUpperCase() + "?";
+		return null;
 	}
 
 
