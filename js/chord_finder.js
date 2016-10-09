@@ -125,6 +125,7 @@ function generateChordList(){
 
 // 文字列か文字列の配列で返る
 function findChord(chord_str){
+	console.log("input: " + chord_str);
 	// コメント行
 	chord_str = chord_str.replace(/'.*$/g, "");
 	// ♪♩♫♬
@@ -141,6 +142,7 @@ function findChord(chord_str){
 	//chord_str = chord_str.replace(/[ 　\/]+/g, "");
 	chord_str = chord_str.replace(/[^cdefgab♭#]+/g, "");
 	if(!chord_str) return "";
+	console.log("chord_str: " + chord_str);
 	var chord_ary = chord_str.match(/.[#♭]?/g);
 
 	var chord2num = {
@@ -254,7 +256,6 @@ function findChord(chord_str){
 			if(score > max) max = score;
 			return score;
 		});
-		console.log(chord_str);
 		console.log(res);
 		console.log(score_ary);
 		res = res.filter(function(e, i){
@@ -304,7 +305,7 @@ function findChord(chord_str){
 					"0,4,7": "",
 					"0,3,7": "m",
 					"0,4,8": "aug",
-					"0,3,6": "m♭5", // dim
+					"0,3,6": "m-5", // dim
 					"0,5,7": "sus4",
 					"0,2,7": "sus2", // xx sus4/xx
 					
@@ -317,7 +318,7 @@ function findChord(chord_str){
 					"0,3,7,9": "m6",
 					"0,3,6,9": "dim7",
 					"0,2,4,7": "add9",
-					"0,3,6,10": "m7♭5",
+					"0,3,6,10": "m7-5",
 					"0,5,7,10": "7sus4",
 
 					// テンション5
