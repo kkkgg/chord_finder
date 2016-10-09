@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>和音判定ツール Chord Finder &middot; 構成音からコードを判定</title>
+    <title>和音判定ツール Chord Finder &middot; 構成音からコード名を判定</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -46,6 +46,47 @@
       .marketing p + h4 {
         margin-top: 28px;
       }
+
+      /* piano */
+      .piano_table *{
+        font-size: 30px;
+      }
+      .piano_table{
+        border: solid 1px black;
+        float:left;
+        display: none;
+      }
+      .piano_upper{
+        height: 0.7em;
+      }
+      .piano_lower{
+        height: 0.5em;
+      }
+      .piano_upper_white1,
+      .piano_upper_white2,
+      .piano_upper_black{
+        border-left: solid 1px black;
+        border-top: solid 1px black;
+        border-right: solid 1px black;
+        border-bottom: solid 0px black;
+      }
+      .piano_upper_white1{
+        width: 0.1em;
+      }
+      .piano_upper_black,
+      .piano_upper_white2{
+        width: 0.2em;
+      }
+      .piano_upper_black{
+        background-color: black;
+      }
+      .piano_lower_white{
+        border-left: solid 1px black;
+        border-top: solid 0px black;
+        border-right: solid 1px black;
+        border-bottom: solid 0px black;
+        width: 0.3em;
+      }
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -68,7 +109,7 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
+          <li class="active"><a href="index.html">Home</a></li>
           <!-- <li><a href="#">About</a></li> -->
           <li><a href="https://github.com/kkkgg" target="_blank">Contact</a></li>
         </ul>
@@ -80,7 +121,7 @@
       <div class="jumbotron">
         <h1>Chord Finder</h1>
         <h2>和音判定ツール</h2>
-        <p class="lead">構成音からコードを判定します。</p>
+        <p class="lead">構成音からコード名を判定します。</p>
         <div class="form-group">
           <label for="comment">構成音:</label>
           <textarea class="form-control" rows="9" id="elements_list" style="width:90%">
@@ -130,12 +171,11 @@ eg#bdg
 ドミファ
 </textarea>
         <ul class="help-block" style="text-align:left; list-style-type:none">
-          <li>※低い方から構成音を記述します。レファ#ラでもdf#aでもOK</li>
-          <li>※改行区切りで入力すると、複数のコードを一括で判定できます</li>
+          <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
+          <li>※改行区切りで入力すると、複数のコード名を一括で判定できます</li>
           <li>※先頭に'を入力するとコメント行となり無視されます</li>
         </ul>
         </div>
-        <!-- TODO リセットボタン -->
         <button class="btn btn-large btn-primary" type="button" id="go_button">判定</button>
         <button class="btn btn-large btn-default" type="button" id="reset_button">リセット</button>
       </div>
@@ -173,10 +213,40 @@ eg#bdg
 
       <hr>
 
+      <div>
+      </div>
+
+      <hr>
+
       <div class="footer">
         <p>&copy; <a href="https://github.com/kkkgg" target="_blank">kkkgg</a> 2016</p>
       </div>
 
+      <table class="piano_table">
+        <tr class="piano_upper">
+          <td colspan="2" class="piano_upper_white2"></td>
+          <td colspan="2" class="piano_upper_black"></td>
+          <td colspan="1" class="piano_upper_white1"></td>
+          <td colspan="2" class="piano_upper_black"></td>
+          <td colspan="2" class="piano_upper_white2"></td>
+          <td colspan="2" class="piano_upper_white2"></td>
+          <td colspan="2" class="piano_upper_black"></td>
+          <td colspan="1" class="piano_upper_white1"></td>
+          <td colspan="2" class="piano_upper_black"></td>
+          <td colspan="1" class="piano_upper_white1"></td>
+          <td colspan="2" class="piano_upper_black"></td>
+          <td colspan="2" class="piano_upper_white2"></td>
+        </tr>
+        <tr class="piano_lower">
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+          <td colspan="3" class="piano_lower_white"></td>
+        </tr>
+      </table>
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -197,7 +267,8 @@ eg#bdg
         );
         var tbody = $("<tbody>");
         res_table.append(tbody);
-        $("#elements_list").val().split("\n").forEach(function(e){
+        var text = $("#elements_list").val();
+        text.split("\n").forEach(function(e){
             var res =findChord(e);
             res = res instanceof Array ? res.join(" ") : res;
             tbody.append($("<tr>")
@@ -209,11 +280,22 @@ eg#bdg
         $("#result_box").empty().append(res_table);
         $("#result_area").show();
         // コピペしやすいようにc-a効くエリアが望ましい
+        // タイトル変更
+        var $title = $("title");
+        if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
+        document.title = text.split("\n")[0] + " のコード名 - " + $title.prop("original_title");
+
+        // URL変更
       });
       $("#reset_button").on("click", function(){
         $("#elements_list").val("");
         $("#result_area").hide();
       });
+      var text = getParameterByName("text");
+      if(text && text != ""){
+        $("#elements_list").val(text);
+        $("#go_button").trigger("click");
+      }
     </script>
 
   </body>
