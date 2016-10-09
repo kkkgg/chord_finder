@@ -334,6 +334,7 @@ function findChord(chord_str){
 	}
 	
 
+	root = chord_ary[0];
 	var res = null;
 	["standard","generated1","generated2"].forEach(function(map_type){
 		// 判定
@@ -343,8 +344,6 @@ function findChord(chord_str){
 		else{
 			return res;
 		}
-
-		root = chord_ary[0];
 
 		// ベース音をとって判定
 		function rotate_and_onbase(){
@@ -356,7 +355,8 @@ function findChord(chord_str){
 			res = rotate_and_onbase();
 		}
 		else if(map_type == "generated2"){
-			res = [].concat(res,rotate_and_onbase());
+			var r = rotate_and_onbase();
+			if(r != null) res = [].concat(res, r);
 		}
 		else{
 			return res;
@@ -368,15 +368,19 @@ function findChord(chord_str){
 			res = find_with_rotate(chord_ary, root, map_type);
 		}
 		else if(map_type == "generated2"){
-			res = [].concat(res, find_with_rotate(chord_ary, root, map_type));
+			var r = find_with_rotate(chord_ary, root, map_type);
+			if(r != null) res = [].concat(res, r);
 		}
 		else{
 			return res;
 		}
 	});
 
+	if(res == null){
+		res = root + "?";
+	}
 	// 戻り値が複数の場合、コレじゃないものを除去
-	if(res instanceof Array){
+	else if(res instanceof Array){
 		var max = -9999;
 		var score_ary = res.map(function(e){
 			// omit は 3点減点
@@ -399,7 +403,7 @@ function findChord(chord_str){
 		console.log(res);
 		console.log("");
 	}
-		
+
 
 	return res;
 

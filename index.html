@@ -315,12 +315,18 @@ eg#bdg
           // TODO 有効文字チェックは共通関数を使う
           if(first_str.match(/^\s*'.*$/)) first_str = "";
           if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
+          var title;
+          var url;
           if(first_str == ""){
-            history.pushState(null, $title.prop("original_title"), "index.html");
+            title = $title.prop("original_title");
+            url = "index.html";
           }
           else{
-            history.pushState(null, first_str + " のコード名 - " + $title.prop("original_title"), "index.html?text=" + encodeURIComponent(first_str));
+            title = first_str + " のコード名 - " + $title.prop("original_title");
+            url = "index.html?text=" + encodeURIComponent(first_str);
           }
+          document.title = title;
+          history.pushState(null, title, url);
         });
 
         // リセットボタンハンドラ
