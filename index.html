@@ -263,68 +263,81 @@ eg#bdg
     <script src="js/vue.js"></script>
     <script src="js/chord_finder.js"></script>
     <script>
-      // TODO インクリメンタルサーチ
-      $("#go_button").on("click", function(){
-        // var res_ary = [];
-        var res_table = $('<table class="table table-striped table-sm">');
-        res_table.append(
-          $("<tr>")
-            .append($("<th>").text("構成音"))
-            .append($("<th>").text("コード名"))
-        );
-        var tbody = $("<tbody>");
-        res_table.append(tbody);
-        var str_ary = $("#elements_list").val().split("\n");
-        str_ary.forEach(function(e){
-            var res =findChord(e);
-            res = res instanceof Array ? res.join(" ") : res;
-            tbody.append($("<tr>")
-              .append($("<td>").text(e.replace("'","")))
-              .append($("<td>").text(res))
-              .addClass( (e != "" && res == "") ? "info" : null)
-            );
-        });
-        $("#result_box").empty().append(res_table);
-        $("#result_area").show();
-        // コピペしやすいようにc-a効くエリアが望ましい
-
-        // タイトル変更
-        var $title = $("title");
-        var first_str = str_ary[0] || "";
-        // TODO 有効文字チェックは共通関数を使う
-        if(first_str.match(/^\s*'.*$/)) first_str = "";
-        if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
-        if(first_str == ""){
-          document.title = $title.prop("original_title");
-        }
-        else{
-          document.title = first_str + " のコード名 - " + $title.prop("original_title");
+      function initPage(){
+        var text = getParameterByName("text");
+        if(text && text != ""){
+          $("#elements_list").val(text);
+          $("#go_button").trigger("click");
         }
 
-        // URL変更
-      });
-      $("#reset_button").on("click", function(){
-        $("#elements_list").val("");
-        $("#result_area").hide();
-      });
-      var text = getParameterByName("text");
-      if(text && text != ""){
-        $("#elements_list").val(text);
-        $("#go_button").trigger("click");
+        // ランダムタグ
+        new Vue({
+          el: '#tags',
+          data: {
+            tags: randomChordStrArray().map(function(e){
+              return { name: e }
+            })
+          }
+        })
       }
 
-      // ランダムタグ
-      new Vue({
-        el: '#tags',
-        data: {
-          tags: randomChordStrArray().map(function(e){
-            return { name: e }
-          })
-        }
-      })
+      $(function(){
+        // 実行ボタンハンドラ
+        $("#go_button").on("click", function(){
+          // TODO インクリメンタルサーチ
+          // var res_ary = [];
+          var res_table = $('<table class="table table-striped table-sm">');
+          res_table.append(
+            $("<tr>")
+              .append($("<th>").text("構成音"))
+              .append($("<th>").text("コード名"))
+          );
+          var tbody = $("<tbody>");
+          res_table.append(tbody);
+          var str_ary = $("#elements_list").val().split("\n");
+          str_ary.forEach(function(e){
+              var res =findChord(e);
+              res = res instanceof Array ? res.join(" ") : res;
+              tbody.append($("<tr>")
+                .append($("<td>").text(e.replace("'","")))
+                .append($("<td>").text(res))
+                .addClass( (e != "" && res == "") ? "info" : null)
+              );
+          });
+          $("#result_box").empty().append(res_table);
+          $("#result_area").show();
+          // コピペしやすいようにc-a効くエリアが望ましい
 
+          // タイトルとURL変更
+          var $title = $("title");
+          var first_str = str_ary[0] || "";
+          if(str_ary.length != 1) first_str = "";
+          // TODO 有効文字チェックは共通関数を使う
+          if(first_str.match(/^\s*'.*$/)) first_str = "";
+          if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
+          if(first_str == ""){
+            history.pushState(null, $title.prop("original_title"), "index.html");
+          }
+          else{
+            history.pushState(null, first_str + " のコード名 - " + $title.prop("original_title"), "index.html?text=" + encodeURIComponent(first_str));
+          }
+        });
+
+        // リセットボタンハンドラ
+        $("#reset_button").on("click", function(){
+          $("#elements_list").val("");
+          $("#result_area").hide();
+        });
+
+        // 履歴ハンドラ
+        $(window).on("popstate", function(e){
+          e.preventDefault();
+          initPage();
+        });
+
+        initPage();
+      });
     </script>
-
   </body>
 </html>
 
