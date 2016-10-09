@@ -1,20 +1,46 @@
-// 破壊的
-function rotateArray(arr, num, reverse){
-  for(var i=0; i<num; i++){
-    if(reverse)
-      arr.unshift(arr.pop());
-    else
-      arr.push(arr.shift());
-  }
-  return arr;
+// ==========================================================
+// Utility
+// ==========================================================
+
+// min から max までの乱整数を返す関数
+// Math.round() を用いると、非一様分布になります!
+function getRandomInt(min, max) {
+  return Math.floor( Math.random() * (max - min + 1) ) + min;
 }
 
+// 回転
+// 非破壊的
+function rotateArray(arr, num, reverse){
+	var resary = arr.concat();
+	for(var i=0; i<num; i++){
+		if(reverse)
+			resary.unshift(resary.pop());
+		else
+			resary.push(resary.shift());
+	}
+	return resary;
+}
+
+// ユニーク
 // 非破壊的
 // function uniqArray(arr){
 //   return arr.filter(function (x, i, self) {
 //     return self.indexOf(x) === i;
 //   });
 // }
+
+// 配列ランダムソート
+function randomSort(ary){
+	return ary.sort(function (a,b){
+		var i = Math.ceil(Math.random()*100)%2;
+		if(i == 0){return -1;}
+		else{return 1;}
+	});
+}
+
+// ==========================================================
+// Web Utility
+// ==========================================================
 
 // querystring
 function getParameterByName(name, url) {
@@ -26,6 +52,125 @@ function getParameterByName(name, url) {
 	if (!results[2]) return '';
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+// ==========================================================
+// Body
+// ==========================================================
+
+function ChordFinder(){
+}
+ChordFinder.getToneNumberTable = function(){
+	return [
+		["c",  0],
+		["b#", 0],
+		["c#", 1],
+		["d♭", 1],
+		["d",  2],
+		["d#", 3],
+		["e♭", 3],
+		["e",  4],
+		["f♭", 4],
+		["e#", 5],
+		["f",  5],
+		["f#", 6],
+		["g♭", 6],
+		["g",  7],
+		["g#", 8],
+		["a♭", 8],
+		["a",  9],
+		["a#", 10],
+		["b♭", 10],
+		["b",  11],
+		["c♭", 11],
+	];
+};
+ChordFinder.toneToKana = function(tone_name_str){
+	var s = tone_name_str;
+	s = s.replace(/c/g, "ド");
+	s = s.replace(/d/g, "レ");
+	s = s.replace(/e/g, "ミ");
+	s = s.replace(/f/g, "ファ");
+	s = s.replace(/g/g, "ソ");
+	s = s.replace(/a/g, "ラ");
+	s = s.replace(/b/g, "シ");
+	return s;
+};
+ChordFinder.getToneToNumberMap = function(){
+	var res = {};
+	this.getToneNumberTable().forEach(function(e){
+		res[e[0]] = e[1];
+	});
+	return res;
+};
+ChordFinder.getToneNames = function(scale){
+	return this.getToneNumberTable().map(function(e){
+		return e[0];
+	}).filter(function(e){
+		switch(scale){
+			case "#":
+				return !e.match(/♭/) && !e.match(/b#|e#/);
+			case "♭":
+				return !e.match(/#/) && !e.match(/c♭|f♭/);;
+			default:
+				return true;
+		}
+	});
+};
+ChordFinder.getStandardChordMap = function(){
+	return {
+		// 三和音
+		"0,4,7": "",
+		"0,3,7": "m",
+		"0,4,6": "-5",
+		"0,3,6": "m-5", // dim
+		"0,4,8": "aug", // +5
+		"0,3,8": "m+5",
+		"0,5,7": "sus4",
+		"0,2,7": "sus2", // Ysus4/X
+		
+		// 四和音
+		"0,4,7,9": "6",
+		"0,3,7,9": "m6",
+		"0,4,7,10": "7",
+		"0,3,7,10": "m7",
+		"0,4,7,11": "M7",
+		"0,3,7,11": "mM7",
+		"0,4,6,10": "7-5",
+		"0,3,6,10": "m7-5",
+		"0,4,6,11": "M7-5",
+		"0,3,6,11": "mM7-5",
+		"0,4,6,9": "6",
+		"0,3,6,9": "m6",
+		"0,5,7,10": "7sus4",
+		"0,3,6,9": "dim7",
+		"0,2,4,7": "add9",
+
+		// テンション5
+		"0,2,4,7,10": "9",
+		"0,3,4,7,10": "+9",
+		"0,2,3,7,10": "m9",
+		"0,2,4,7,11": "M9",
+		"0,2,4,7,9": "69",
+		"0,2,3,7,9": "m69",
+
+		// テンション6
+		"0,2,4,5,7,10": "11",
+		"0,2,4,6,7,10": "+11",
+		"0,2,3,5,7,10": "m11",
+		"0,2,3,6,7,10": "m+11",
+
+		// テンション7
+		"0,2,4,5,7,9,10": "13",
+		"0,2,4,5,7,8,10": "-13",
+		"0,2,3,5,7,9,10": "m13",
+		"0,2,3,5,7,8,10": "m-13",
+
+		// その他
+		"0,3,4,10": "+9[omit5] ジミヘンコード",
+	};
+};
+ChordFinder.prototype = {
+};
 
 function productArray(ary1, ary2){
 	var res = [];
@@ -155,29 +300,8 @@ function findChord(chord_str){
 	if(!chord_str) return "";
 	console.log("chord_str: " + chord_str);
 	var chord_ary = chord_str.match(/.[#♭]?/g);
+	var chord2num = ChordFinder.getToneToNumberMap();
 
-	var chord2num = {
-		"c":  0,
-		"b#": 0,
-		"c#": 1,
-		"d♭": 1,
-		"d":  2,
-		"d#": 3,
-		"e♭": 3,
-		"e":  4,
-		"f♭": 4,
-		"f":  5,
-		"f#": 6,
-		"g♭": 6,
-		"g":  7,
-		"g#": 8,
-		"a♭": 8,
-		"a":  9,
-		"a#": 10,
-		"b♭": 10,
-		"b":  11,
-	};
-	
 	// 音階ソート
 	{
 		// 数値付与
@@ -193,7 +317,7 @@ function findChord(chord_str){
 		});
 		// ルート先頭へローテート
 		var idx = obj_ary.indexOf(root);
-		rotateArray(obj_ary, idx);
+		obj_ary = rotateArray(obj_ary, idx);
         // 重複除去: C#とD♭など同音もuniqになる
 		var before = null;
 		var uniq_obj_ary = [];
@@ -311,57 +435,7 @@ function findChord(chord_str){
 			var chord_map = {};
 			if(map_type == null || map_type == "standard"){
 				// 基礎和音
-				chord_map = {
-					// 三和音
-					"0,4,7": "",
-					"0,3,7": "m",
-					"0,4,6": "-5",
-					"0,3,6": "m-5", // dim
-					"0,4,8": "aug", // +5
-					"0,3,8": "m+5",
-					"0,5,7": "sus4",
-					"0,2,7": "sus2", // Ysus4/X
-					
-					// 四和音
-					"0,4,7,9": "6",
-					"0,3,7,9": "m6",
-					"0,4,7,10": "7",
-					"0,3,7,10": "m7",
-					"0,4,7,11": "M7",
-					"0,3,7,11": "mM7",
-					"0,4,6,10": "7-5",
-					"0,3,6,10": "m7-5",
-					"0,4,6,11": "M7-5",
-					"0,3,6,11": "mM7-5",
-					"0,4,6,9": "6",
-					"0,3,6,9": "m6",
-					"0,5,7,10": "7sus4",
-					"0,3,6,9": "dim7",
-					"0,2,4,7": "add9",
-
-					// テンション5
-					"0,2,4,7,10": "9",
-					"0,3,4,7,10": "+9",
-					"0,2,3,7,10": "m9",
-					"0,2,4,7,11": "M9",
-					"0,2,4,7,9": "69",
-					"0,2,3,7,9": "m69",
-
-					// テンション6
-					"0,2,4,5,7,10": "11",
-					"0,2,4,6,7,10": "+11",
-					"0,2,3,5,7,10": "m11",
-					"0,2,3,6,7,10": "m+11",
-
-					// テンション7
-					"0,2,4,5,7,9,10": "13",
-					"0,2,4,5,7,8,10": "-13",
-					"0,2,3,5,7,9,10": "m13",
-					"0,2,3,5,7,8,10": "m-13",
-
-					// その他
-					"0,3,4,10": "+9[omit5] ジミヘンコード",
-				};
+				chord_map = ChordFinder.getStandardChordMap();
 			}
 			else if(map_type == "generated1"){
 				// 生成コード(omitなし)で判定
@@ -422,7 +496,7 @@ function findChord(chord_str){
 	function find_with_rotate(chord_ary, root, map_type){
 		var tmp_chord_ary = [].concat(chord_ary);
 		for(var i=0; i<tmp_chord_ary.length-1; i++){
-			rotateArray(tmp_chord_ary, 1);
+			tmp_chord_ary = rotateArray(tmp_chord_ary, 1);
 			res = find(tmp_chord_ary, map_type);
 			if(res == null){
 			}
@@ -437,9 +511,33 @@ function findChord(chord_str){
 		}
 		return null;
 	}
-
-
 }
+
+// ==========================================================
+// View Utility
+// ==========================================================
+
+function randomChordStrArray(){
+	return randomSort(Object.keys(ChordFinder.getStandardChordMap()))
+		.slice(0,8).map(function(e){
+			// ルート音のランダム選定
+			var tones = ChordFinder.getToneNames(getRandomInt(0,1) ? "#" : "♭");
+			var num = getRandomInt(0,tones.length-1);
+			var tone = tones[num];
+
+			// スケール取得しコンバート
+			var scale = rotateArray(tones, num);
+			var chord_str = e.split(",").map(function(e){
+				return scale[e];
+			}).join("");
+			return ChordFinder.toneToKana(chord_str);
+		}
+	);
+}
+
+// ==========================================================
+// Test Utility
+// ==========================================================
 
 // 組み合わせ計算
 function k_combinations(set, k) {

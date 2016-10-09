@@ -213,7 +213,13 @@ eg#bdg
 
       <hr>
 
-      <div>
+      <div id="tags">
+        <h4>他のコード名を調べる</h4>
+        <ul>
+          <li v-for="tag in tags">
+            <a href="index.html?text={{ encodeURIComponent(tag.name) }}">{{ tag.name }}</a>
+          </li>
+        </ul>
       </div>
 
       <hr>
@@ -254,6 +260,7 @@ eg#bdg
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
     <script src="js/chord_finder.js"></script>
     <script>
       // TODO インクリメンタルサーチ
@@ -267,8 +274,8 @@ eg#bdg
         );
         var tbody = $("<tbody>");
         res_table.append(tbody);
-        var text = $("#elements_list").val();
-        text.split("\n").forEach(function(e){
+        var str_ary = $("#elements_list").val().split("\n");
+        str_ary.forEach(function(e){
             var res =findChord(e);
             res = res instanceof Array ? res.join(" ") : res;
             tbody.append($("<tr>")
@@ -280,10 +287,19 @@ eg#bdg
         $("#result_box").empty().append(res_table);
         $("#result_area").show();
         // コピペしやすいようにc-a効くエリアが望ましい
+
         // タイトル変更
         var $title = $("title");
+        var first_str = str_ary[0] || "";
+        // TODO 有効文字チェックは共通関数を使う
+        if(first_str.match(/^\s*'.*$/)) first_str = "";
         if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
-        document.title = text.split("\n")[0] + " のコード名 - " + $title.prop("original_title");
+        if(first_str == ""){
+          document.title = $title.prop("original_title");
+        }
+        else{
+          document.title = first_str + " のコード名 - " + $title.prop("original_title");
+        }
 
         // URL変更
       });
@@ -296,6 +312,17 @@ eg#bdg
         $("#elements_list").val(text);
         $("#go_button").trigger("click");
       }
+
+      // ランダムタグ
+      new Vue({
+        el: '#tags',
+        data: {
+          tags: randomChordStrArray().map(function(e){
+            return { name: e }
+          })
+        }
+      })
+
     </script>
 
   </body>
