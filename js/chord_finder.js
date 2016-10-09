@@ -595,5 +595,5 @@ function test_stdin(){
 }
 
 //test();
-test_stdin();
+// test_stdin();
 // generateChord();
