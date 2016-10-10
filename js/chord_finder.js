@@ -340,6 +340,7 @@ function findChord(chord_str){
 		// 判定
 		if(res == null){
 			res = find(chord_ary, map_type);
+			console.log({"find": res})
 		}
 		else{
 			return res;
@@ -353,10 +354,12 @@ function findChord(chord_str){
 		};
 		if(res == null){
 			res = rotate_and_onbase();
+			console.log({"fotate_and_onbase": res})
 		}
 		else if(map_type == "generated2"){
 			var r = rotate_and_onbase();
 			if(r != null) res = [].concat(res, r);
+			console.log({"fotate_and_onbase,generated2": r})
 		}
 		else{
 			return res;
@@ -366,10 +369,12 @@ function findChord(chord_str){
 		if(res == null){
 			// 転回でマッチした場合はオンベースとする
 			res = find_with_rotate(chord_ary, root, map_type);
+			console.log({"find_with_rotate": r})
 		}
 		else if(map_type == "generated2"){
 			var r = find_with_rotate(chord_ary, root, map_type);
 			if(r != null) res = [].concat(res, r);
+			console.log({"find_with_rotate,generated2": r})
 		}
 		else{
 			return res;
@@ -501,7 +506,7 @@ function findChord(chord_str){
 		var tmp_chord_ary = [].concat(chord_ary);
 		for(var i=0; i<tmp_chord_ary.length-1; i++){
 			tmp_chord_ary = rotateArray(tmp_chord_ary, 1);
-			res = find(tmp_chord_ary, map_type);
+			var res = find(tmp_chord_ary, map_type);
 			if(res == null){
 			}
 			else if(res instanceof Array){
