@@ -23,11 +23,11 @@ function rotateArray(arr, num, reverse){
 
 // ユニーク
 // 非破壊的
-// function uniqArray(arr){
-//   return arr.filter(function (x, i, self) {
-//     return self.indexOf(x) === i;
-//   });
-// }
+function uniqArray(arr){
+	return arr.filter(function (x, i, self) {
+		return self.indexOf(x) === i;
+	});
+}
 
 // 配列ランダムソート
 function randomSort(ary){
@@ -119,27 +119,28 @@ function getParameterByName(name, url) {
 			var root = tones.getRoot();
 			var res = null;
 			["standard", "generated1", "generated2"].forEach(function(map_type){
-				if(res != null) return;
-				// if(res != null && map_type == "generated2") return;
+				// if(res != null) return;
+				if(res != null && map_type == "generated2") return;
 
 				// 判定
-				res = find(tones.tone_ary, map_type);
+				var r = find(tones.tone_ary, map_type);
+				if(r != null) res = [].concat(res || [], r);
 				console.log({"find": res})
 
-				// ベース音をとって判定
+				// ベース音をとって転回判定
 				function rotate_and_onbase(){
 					var tmp_chord_ary = [].concat(tones.tone_ary);
 					tmp_chord_ary.shift();
 					return find_with_rotate(tmp_chord_ary, root, map_type);
 				};
-				if(res == null || map_type == "generated2"){
+				if(true || res == null || map_type == "generated2"){
 					var r = rotate_and_onbase();
 					if(r != null) res = [].concat(res || [], r);
 					console.log({"fotate_and_onbase": r})
 				}
 
-				// 転回して判定
-				if(res == null || map_type == "generated2"){
+				// ベース音ありで転回判定
+				if(true || res == null || map_type == "generated2"){
 					// 転回でマッチした場合はオンベースとする
 					var r = find_with_rotate(tones.tone_ary, root, map_type);
 					if(r != null) res = [].concat(res || [], r);
@@ -152,19 +153,33 @@ function getParameterByName(name, url) {
 			}
 			// 戻り値が複数の場合、コレじゃないものを除去
 			else if(res instanceof Array){
+				res = uniqArray(res);
 				if(res.length == 1) res = res[0];
 				else{
 					var max = -9999;
 					var score_ary = res.map(function(e){
-						// omit は 3点減点
-						var m = e.match(/omit/g);
-						var score = 0 - (m ? m.length * 3 : 0);
-						// (9)などのテンションは2点減点
-						var m2 = e.match(/\(/g);
-						score = score - (m2 ? m2.length * 2 : 0);
-						// オンコードは1点減点
-						var m3 = e.match(/\//g);
-						score = score - (m3 ? m3.length : 0);
+						var str = e;
+						var score = 0;
+						var debug = {};
+						[
+							// omit
+							[/omit\d/g, 6],
+							// (9)などの追加系テンション
+							[/\([+-]?\d+\)/g, 5],
+							// +-tension, add
+							[/6|[+-]\d+|add9|sus2/g, 4],
+							// 7, M7, 9, 11, 13, sus4, onbase
+							[/sus4|M7|11|13|\/.+$|[79]/g, 3],
+						].forEach(function(e){
+							var reg = e[0];
+							var val = e[1];
+							var m = str.match(reg);
+							str = str.replace(reg,"");
+							score = score - (m ? m.length * val : 0);
+							debug[val] = m;
+						});
+						debug["debris"] = str;
+						console.log(debug);
 						if(score > max) max = score;
 						return score;
 					});
@@ -263,6 +278,8 @@ function getParameterByName(name, url) {
 	};
 
 	ChordFinder.getStandardChordMap = function(){
+		// フラットを-でなくフラットにする場合の影響先
+		// scoreの正規表現、D♭5は括弧をつけないとあいまい
 		return {
 			// 三和音
 			"0,4,7": "",
@@ -329,6 +346,7 @@ function getParameterByName(name, url) {
 		var str = this.replaceComment(chord_str);
 		if( str == ""){
 			console.log("chord_str: empty");
+			return "";
 		}
 		else{
 			var tones = Tones.parse(str);
@@ -368,6 +386,8 @@ function getParameterByName(name, url) {
 	}
 
 	function generateChordList(){
+		// フラットを-でなくフラットにする場合の影響先
+		// scoreの正規表現、D♭5は括弧をつけないとあいまい
 		// 0
 		var root_ary = [
 			[0, ""],
@@ -409,7 +429,7 @@ function getParameterByName(name, url) {
 			[3, "(+9)"],
 			//[5, "add4"],  // トライアドに足すときはこっち
 			[5, "(11)"], // 7thに足すときはこっちっぽい
-			[6, "(#11)"], // 7thに足すときはこっちっぽい
+			[6, "(+11)"], // 7thに足すときはこっちっぽい
 			[8, "(-13)"],
 			[9, "(13)"],
 			[10, "(+13)"],

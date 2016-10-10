@@ -327,7 +327,7 @@ eg#bdg
               tbody.append($("<tr>")
                 .append($("<td>").text(e.replace("'","")))
                 .append($("<td>").text(res))
-                .addClass( (e != "" && res == "") ? "info" : null)
+                .addClass( (e != "" && !res) ? "info" : null)
               );
           });
           $("#result_box").empty().append(res_table);
