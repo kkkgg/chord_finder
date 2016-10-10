@@ -400,34 +400,28 @@ function getParameterByName(name, url) {
 
 		// tension
 		// 重なっている場合加えない、それぞれ独立
-		var tension_ary1 = [
-			[null, ""],
+		var tension_ary = [
 			// [1, "add-9"],
 			// [2, "add9"], // トライアドに足すときはこっち
 			// [3, "add+9"],
 			[1, "(-9)"],
 			[2, "(9)"],
 			[3, "(+9)"],
-		];
-		var tension_ary2 = [
-			[null, ""],
 			//[5, "add4"],  // トライアドに足すときはこっち
 			[5, "(11)"], // 7thに足すときはこっちっぽい
 			[6, "(#11)"], // 7thに足すときはこっちっぽい
-		];
-		var tension_ary3 = [
-			[null, ""],
 			[8, "(-13)"],
 			[9, "(13)"],
+			[10, "(+13)"],
 		];
 
 		var tmp_ary;
 		tmp_ary = productArray(root_ary, third_ary);
 		tmp_ary = productArray(tmp_ary, seventh_ary);
 		tmp_ary = productArray(tmp_ary, fifth_ary);
-		tmp_ary = productArray(tmp_ary, tension_ary1);
-		tmp_ary = productArray(tmp_ary, tension_ary2);
-		tmp_ary = productArray(tmp_ary, tension_ary3);
+		tension_ary.forEach(function(e){
+			tmp_ary = productArray(tmp_ary, [[null, ""], e]);
+		});
 
 		var regex1 = /(omit\d)/g;
 		tmp_ary = tmp_ary.map(function(e){
@@ -725,11 +719,16 @@ function getParameterByName(name, url) {
 		stream = new LineStream( { decodeStrings : false, encoding: 'utf-8'} );
 		process.stdin.pipe( stream )
 		stream.on( 'data', function( data ){
-			console.log( findChord(data) );
+			// console.log のオフ
+			var func = console.log;
+			console.log = function(){};
+			var res = global.ChordFinder.find(data);
+			console.log = func;
+			console.log( res );
 		});
 	}
 
-	//test();
+	// test();
 	// test_stdin();
 	// generateChord();
 })(this);
