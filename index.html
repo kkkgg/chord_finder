@@ -263,6 +263,10 @@ eg#bdg
     <script src="js/vue.js"></script>
     <script src="js/chord_finder.js"></script>
     <script>
+      // ==========================================================
+      // Vies Helper
+      // ==========================================================
+
       function initPage(){
         var text = getParameterByName("text");
         if(text && text != ""){
@@ -281,6 +285,28 @@ eg#bdg
         })
       }
 
+      function randomChordStrArray(){
+          return randomSort(Object.keys(ChordFinder.getStandardChordMap()))
+              .slice(0,8).map(function(e){
+                  // ルート音のランダム選定
+                  var tones = ChordFinder.getToneNames(getRandomInt(0,1) ? "#" : "♭");
+                  var num = getRandomInt(0,tones.length-1);
+                  var tone = tones[num];
+
+                  // スケール取得しコンバート
+                  var scale = rotateArray(tones, num);
+                  var chord_str = e.split(",").map(function(e){
+                      return scale[e];
+                  }).join("");
+                  return ChordFinder.toneToKana(chord_str);
+              }
+          );
+      }
+
+      // ==========================================================
+      // 
+      // ==========================================================
+
       $(function(){
         // 実行ボタンハンドラ
         $("#go_button").on("click", function(){
@@ -296,7 +322,7 @@ eg#bdg
           res_table.append(tbody);
           var str_ary = $("#elements_list").val().split("\n");
           str_ary.forEach(function(e){
-              var res =findChord(e);
+              var res =ChordFinder.find(e);
               res = res instanceof Array ? res.join(" ") : res;
               tbody.append($("<tr>")
                 .append($("<td>").text(e.replace("'","")))
