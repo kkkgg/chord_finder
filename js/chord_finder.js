@@ -435,26 +435,33 @@ function getParameterByName(name, url) {
 			[10, "(+13)"],
 		];
 
+		function moveToTail( chord_ary, regex ){
+			return chord_ary.map(function(e){
+				// sus4を末尾に付け替え
+				var moving_targets = e[1].match(regex);
+				if( moving_targets ){
+					return [
+						e[0],
+						e[1].replace(regex, "") + moving_targets.join("")
+					];
+				}
+				else return e;
+			});
+		}
+
 		var tmp_ary;
 		tmp_ary = productArray(root_ary, third_ary);
 		tmp_ary = productArray(tmp_ary, seventh_ary);
+		// sus4は3thより表記が後
+		tmp_ary = moveToTail(tmp_ary, /(sus4)/g);
+		// 5thは7thより表記が後
 		tmp_ary = productArray(tmp_ary, fifth_ary);
 		tension_ary.forEach(function(e){
 			tmp_ary = productArray(tmp_ary, [[null, ""], e]);
 		});
+		// omitは表記が最後
+		tmp_ary = moveToTail(tmp_ary, /(omit\d)/g);
 
-		var regex1 = /(omit\d)/g;
-		tmp_ary = tmp_ary.map(function(e){
-			// omit記述は末尾に付け替え
-			var moving_targets = e[1].match(regex1);
-			if( moving_targets ){
-				return [
-					e[0],
-					e[1].replace(regex1, "") + moving_targets.join("")
-				];
-			}
-			else return e;
-		});
 		return tmp_ary;
 	}
 
