@@ -118,15 +118,13 @@ function getParameterByName(name, url) {
 
 			var root = tones.getRoot();
 			var res = null;
-			["standard","generated1","generated2"].forEach(function(map_type){
+			["standard", "generated1", "generated2"].forEach(function(map_type){
+				if(res != null) return;
+				// if(res != null && map_type == "generated2") return;
+
 				// 判定
-				if(res == null){
-					res = find(tones.tone_ary, map_type);
-					console.log({"find": res})
-				}
-				else{
-					return res;
-				}
+				res = find(tones.tone_ary, map_type);
+				console.log({"find": res})
 
 				// ベース音をとって判定
 				function rotate_and_onbase(){
@@ -134,32 +132,18 @@ function getParameterByName(name, url) {
 					tmp_chord_ary.shift();
 					return find_with_rotate(tmp_chord_ary, root, map_type);
 				};
-				if(res == null){
-					res = rotate_and_onbase();
-					console.log({"fotate_and_onbase": res})
-				}
-				else if(map_type == "generated2"){
+				if(res == null || map_type == "generated2"){
 					var r = rotate_and_onbase();
-					if(r != null) res = [].concat(res, r);
-					console.log({"fotate_and_onbase,generated2": r})
-				}
-				else{
-					return res;
+					if(r != null) res = [].concat(res || [], r);
+					console.log({"fotate_and_onbase": r})
 				}
 
 				// 転回して判定
-				if(res == null){
+				if(res == null || map_type == "generated2"){
 					// 転回でマッチした場合はオンベースとする
-					res = find_with_rotate(tones.tone_ary, root, map_type);
-					console.log({"find_with_rotate": r})
-				}
-				else if(map_type == "generated2"){
 					var r = find_with_rotate(tones.tone_ary, root, map_type);
-					if(r != null) res = [].concat(res, r);
-					console.log({"find_with_rotate,generated2": r})
-				}
-				else{
-					return res;
+					if(r != null) res = [].concat(res || [], r);
+					console.log({"find_with_rotate": r})
 				}
 			});
 
@@ -168,27 +152,29 @@ function getParameterByName(name, url) {
 			}
 			// 戻り値が複数の場合、コレじゃないものを除去
 			else if(res instanceof Array){
-				var max = -9999;
-				var score_ary = res.map(function(e){
-					// omit は 3点減点
-					var m = e.match(/omit/g);
-					var score = 0 - (m ? m.length * 3 : 0);
-					// (9)などのテンションは2点減点
-					var m2 = e.match(/\(/g);
-					score = score - (m2 ? m2.length * 2 : 0);
-					// オンコードは1点減点
-					var m3 = e.match(/\//g);
-					score = score - (m3 ? m3.length : 0);
-					if(score > max) max = score;
-					return score;
-				});
-				console.log(res);
-				console.log(score_ary);
-				res = res.filter(function(e, i){
-					return score_ary[i] == max;
-				});
-				console.log(res);
-				console.log("");
+				if(res.length == 1) res = res[0];
+				else{
+					var max = -9999;
+					var score_ary = res.map(function(e){
+						// omit は 3点減点
+						var m = e.match(/omit/g);
+						var score = 0 - (m ? m.length * 3 : 0);
+						// (9)などのテンションは2点減点
+						var m2 = e.match(/\(/g);
+						score = score - (m2 ? m2.length * 2 : 0);
+						// オンコードは1点減点
+						var m3 = e.match(/\//g);
+						score = score - (m3 ? m3.length : 0);
+						if(score > max) max = score;
+						return score;
+					});
+					console.log(res);
+					console.log(score_ary);
+					res = res.filter(function(e, i){
+						return score_ary[i] == max;
+					});
+					console.log(res);
+				}
 			}
 			return res;
 		}
@@ -284,7 +270,7 @@ function getParameterByName(name, url) {
 			"0,4,6": "-5",
 			"0,3,6": "m-5", // dim
 			"0,4,8": "aug", // +5
-			"0,3,8": "m+5",
+			// "0,3,8": "m+5", // Im+5 = V#
 			"0,5,7": "sus4",
 			"0,2,7": "sus2", // Ysus4/X
 			
@@ -330,16 +316,26 @@ function getParameterByName(name, url) {
 		};
 	};
 
+	// コメント除去
+	ChordFinder.replaceComment = function(chord_str){
+		return chord_str.replace(/'.*$/g, "");
+	};
+
 	// 文字列か文字列の配列で返る
 	ChordFinder.find = function(chord_str){
+		console.log("");
 		console.log("input: " + chord_str);
 
-		// コメント行除去
-		chord_str = chord_str.replace(/'.*$/g, "");
-		var tones = Tones.parse(chord_str);
-		console.log("chord_str: " + tones);
-		if(tones == null) return "";
-		else return tones.toChords();
+		var str = this.replaceComment(chord_str);
+		if( str == ""){
+			console.log("chord_str: empty");
+		}
+		else{
+			var tones = Tones.parse(str);
+			console.log("chord_str: " + tones);
+			if(tones == null) return "";
+			else return tones.toChords();
+		}
 	};
 
 	function productArray(ary1, ary2){

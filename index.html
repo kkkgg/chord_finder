@@ -337,9 +337,9 @@ eg#bdg
           // タイトルとURL変更
           var $title = $("title");
           var first_str = str_ary[0] || "";
-          if(str_ary.length != 1) first_str = "";
-          // TODO 有効文字チェックは共通関数を使う
-          if(first_str.match(/^\s*'.*$/)) first_str = "";
+          // 複数入力チェック
+          if(str_ary[1]) first_str = "";
+          first_str = ChordFinder.replaceComment(first_str);
           if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
           var title;
           var url;
