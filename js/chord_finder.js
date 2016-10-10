@@ -125,18 +125,21 @@ function getParameterByName(name, url) {
 				// 判定
 				var r = find(tones.tone_ary, map_type);
 				if(r != null) res = [].concat(res || [], r);
-				console.log({"find": res})
+				console.log({"find": r})
 
 				// ベース音をとって転回判定
-				function rotate_and_onbase(){
-					var tmp_chord_ary = [].concat(tones.tone_ary);
-					tmp_chord_ary.shift();
-					return find_with_rotate(tmp_chord_ary, root, map_type);
-				};
 				if(true || res == null || map_type == "generated2"){
-					var r = rotate_and_onbase();
+					var tmp_chord_ary = tones.tone_ary.concat();
+					tmp_chord_ary.shift();
+					var r = find(tmp_chord_ary, map_type);
+					if(r != null){
+						r = r + "/" + root.toUpperCase();
+						res = [].concat(res || [], r);
+					}
+					console.log({"rotate_and_onbase1": r})
+					var r = find_with_rotate(tmp_chord_ary, root, map_type);
 					if(r != null) res = [].concat(res || [], r);
-					console.log({"fotate_and_onbase": r})
+					console.log({"rotate_and_onbase2": r})
 				}
 
 				// ベース音ありで転回判定
@@ -168,8 +171,10 @@ function getParameterByName(name, url) {
 							[/\([+-]?\d+\)/g, 5],
 							// +-tension, add
 							[/6|[+-]\d+|add9|sus2/g, 4],
-							// 7, M7, 9, 11, 13, sus4, onbase
-							[/sus4|M7|11|13|\/.+$|[79]/g, 3],
+							// 9, 11, 13, onbase
+							[/11|13|\/.+$|9/g, 3],
+							// 7, M7, sus4
+							[/sus4|M7|7/g, 2],
 						].forEach(function(e){
 							var reg = e[0];
 							var val = e[1];
@@ -476,7 +481,7 @@ function getParameterByName(name, url) {
 			var base_num = 36;
 			var before_num = base_num;
 			chord_ary.forEach(function(e){
-				num = base_num + chord2num[e];
+				var num = base_num + chord2num[e];
 				if(num < before_num){
 					base_num += 12;
 					num = base_num + chord2num[e];
@@ -494,6 +499,7 @@ function getParameterByName(name, url) {
 				rel_num_ary.push(e - base_num);
 			});
 		}
+		// console.log({"rel_num_ary": rel_num_ary, "num_ary": num_ary});
 
 		// 和音マップにはまるか判定
 		{
@@ -559,10 +565,11 @@ function getParameterByName(name, url) {
 
 	// 文字列か文字列の配列で返る
 	function find_with_rotate(chord_ary, root, map_type){
-		var tmp_chord_ary = [].concat(chord_ary);
+		var tmp_chord_ary = chord_ary.concat();
 		for(var i=0; i<tmp_chord_ary.length-1; i++){
 			tmp_chord_ary = rotateArray(tmp_chord_ary, 1);
 			var res = find(tmp_chord_ary, map_type);
+			// console.log( { "name":"find_with_rotate", "chord_ary":chord_ary, "map_type":map_type, "res":res } );
 			if(res == null){
 			}
 			else if(res instanceof Array){
