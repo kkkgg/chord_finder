@@ -170,9 +170,9 @@ function getParameterByName(name, url) {
 							// (9)などの追加系テンション
 							[/\([+-]?\d+\)/g, 5],
 							// +-tension, add
-							[/6|[+-]\d+|add9|sus2/g, 4],
+							[/aug|6|[+-]\d+|add9|sus2/g, 4],
 							// 9, 11, 13, onbase
-							[/11|13|\/.+$|9/g, 3],
+							[/dim7|11|13|\/.+$|9/g, 3],
 							// 7, M7, sus4
 							[/sus4|M7|7/g, 2],
 						].forEach(function(e){
