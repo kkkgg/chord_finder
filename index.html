@@ -110,19 +110,40 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="index.html">Home</a></li>
-          <!-- <li><a href="#">About</a></li> -->
+          <li><a href="http://ningenrikigaku.blogspot.jp/2016/10/blog-post.html" target="_blank">About</a></li>
           <li><a href="https://github.com/kkkgg" target="_blank">Contact</a></li>
         </ul>
         <h3 class="muted">Chord Finder</h3>
       </div>
 
-      <hr>
-
       <div class="jumbotron">
         <h1>Chord Finder</h1>
         <h2>和音判定ツール</h2>
         <p class="lead">構成音からコード名を判定します。</p>
-        <div class="form-group">
+      </div>
+
+      <div id="app">
+        <ul class="nav nav-tabs">
+          <li id="tab-single" role="presentation" class="active"><a v-on:click.stop="switchSingle">個別</a></li>
+          <li id="tab-multi" role="presentation"><a v-on:click.stop="switchMulti">一括</a></li>
+        </ul>
+
+        <div id="single_input" class="form-group">
+          <div class="input-group">
+            <input type="text" id="single_text_input" class="form-control" v-model="searchText"  placeholder="ファシ♭ド" style="width:100%">
+          </div>
+          <ul class="help-block" style="text-align:left; list-style-type:none">
+            <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
+          </ul>
+          <table class="table table-striped">
+            <tr><th>コード</th><th>スコア</th></tr>
+            <tbody>
+            <tr v-for="rec in findDetail(searchText)['result']"><td>{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="multi_input" class="form-group" style="display:none;text-align:center">
           <label for="comment">構成音:</label>
           <textarea class="form-control" rows="9" id="elements_list" style="width:90%">
 '入力例
@@ -170,25 +191,24 @@ eg#bdg
 ドファシ
 ドミファ
 </textarea>
-        <ul class="help-block" style="text-align:left; list-style-type:none">
-          <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
-          <li>※改行区切りで入力すると、複数のコード名を一括で判定できます</li>
-          <li>※先頭に'を入力するとコメント行となり無視されます</li>
-        </ul>
+          <ul class="help-block" style="text-align:left; list-style-type:none">
+            <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
+            <li>※改行区切りで入力すると、複数のコード名を一括で判定できます</li>
+            <li>※先頭に'を入力するとコメント行となり無視されます</li>
+          </ul>
+          <button class="btn btn-large btn-primary" type="button" id="go_button">判定</button>
+          <button class="btn btn-large btn-default" type="button" id="reset_button">リセット</button>
+
+          <hr>
+
+          <div id="result_area" class="form-group" style="display:none">
+            <h4>判定結果:</h4>
+            <!--
+            <textarea class="form-control" rows="5" id="result_list" style="width:70%"></textarea>
+            -->
+            <div id="result_box"></div>
+          </div>
         </div>
-        <button class="btn btn-large btn-primary" type="button" id="go_button">判定</button>
-        <button class="btn btn-large btn-default" type="button" id="reset_button">リセット</button>
-      </div>
-
-      <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-      <hr>
-
-      <div id="result_area" class="form-group" style="display:none">
-        <h4>判定結果:</h4>
-        <!--
-        <textarea class="form-control" rows="5" id="result_list" style="width:70%"></textarea>
-        -->
-        <div id="result_box"></div>
       </div>
 
       <hr>
@@ -267,11 +287,41 @@ eg#bdg
       // Vies Helper
       // ==========================================================
 
+      // 変換ツール
+      var app_view = new Vue({
+        el: '#app',
+        data: {
+          searchText: '',
+          chord: ''
+        },
+        methods: {
+          switchSingle: function(){
+            $("#tab-multi").removeClass("active");
+            $("#tab-single").addClass("active");
+            $("#multi_input").hide();
+            $("#single_input").show();
+          },
+          switchMulti: function(){
+            $("#tab-single").removeClass("active");
+            $("#tab-multi").addClass("active");
+            $("#single_input").hide();
+            $("#multi_input").show();
+          },
+          findDetail: function(text){
+            return ChordFinder.findDetail(text);
+          }
+
+        }
+      })
+
       function initPage(){
+
         var text = getParameterByName("text");
         if(text && text != ""){
-          $("#elements_list").val(text);
-          $("#go_button").trigger("click");
+          // $("#elements_list").val(text);
+          // $("#go_button").trigger("click");
+          app_view.searchText = text;
+          changeTitle(str);
         }
 
         // ランダムタグ
@@ -301,6 +351,25 @@ eg#bdg
                   return ChordFinder.toneToKana(chord_str);
               }
           );
+      }
+
+      // タイトルとURL変更
+      function changeTitle(str){
+        var $title = $("title");
+        str = ChordFinder.replaceComment(str);
+        if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
+        var title;
+        var url;
+        if(str == ""){
+          title = $title.prop("original_title");
+          url = "index.html";
+        }
+        else{
+          title = str + " のコード名 - " + $title.prop("original_title");
+          url = "index.html?text=" + encodeURIComponent(str);
+        }
+        document.title = title;
+        history.pushState(null, title, url);
       }
 
       // ==========================================================
@@ -334,25 +403,10 @@ eg#bdg
           $("#result_area").show();
           // コピペしやすいようにc-a効くエリアが望ましい
 
-          // タイトルとURL変更
-          var $title = $("title");
-          var first_str = str_ary[0] || "";
-          // 複数入力チェック
-          if(str_ary[1]) first_str = "";
-          first_str = ChordFinder.replaceComment(first_str);
-          if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
-          var title;
-          var url;
-          if(first_str == ""){
-            title = $title.prop("original_title");
-            url = "index.html";
-          }
-          else{
-            title = first_str + " のコード名 - " + $title.prop("original_title");
-            url = "index.html?text=" + encodeURIComponent(first_str);
-          }
-          document.title = title;
-          history.pushState(null, title, url);
+          // // タイトルとURL変更
+          // var first_str = str_ary[0] || "";
+          // // 複数入力チェック
+          // if(str_ary[1]) first_str = "";
         });
 
         // リセットボタンハンドラ
@@ -360,6 +414,8 @@ eg#bdg
           $("#elements_list").val("");
           $("#result_area").hide();
         });
+
+        $("#single_text_input").focus();
 
         // 履歴ハンドラ
         $(window).on("popstate", function(e){

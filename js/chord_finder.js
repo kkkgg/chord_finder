@@ -112,7 +112,8 @@ function getParameterByName(name, url) {
 			return this.tone_ary[0];
 		},
 
-		"toChords" : function(){
+		"toChords" : function(options){
+			if(options == null) options = {};
 			// 音階ソート、重複除去
 			var tones = this.normalize();
 
@@ -190,11 +191,25 @@ function getParameterByName(name, url) {
 					});
 					console.log(res);
 					console.log(score_ary);
-					res = res.filter(function(e, i){
-						return score_ary[i] == max;
-					});
+					if(options["detail"]){
+						res = {
+							result: res.map(function(e, i){
+								return { chord: e, score: score_ary[i] };
+							}).sort(function(a, b){
+								return b["score"] - a["score"];
+							})
+						}
+					}
+					else{
+						res = res.filter(function(e, i){
+							return score_ary[i] == max;
+						});
+					}
 					console.log(res);
 				}
+			}
+			if(options["detail"] && !res["result"]){
+				res = { result: [{ chord: res, score: 0 }] };
 			}
 			return res;
 		}
@@ -360,6 +375,23 @@ function getParameterByName(name, url) {
 			console.log("chord_str: " + tones);
 			if(tones == null) return "";
 			else return tones.toChords();
+		}
+	};
+
+	ChordFinder.findDetail = function(chord_str){
+		console.log("");
+		console.log("input: " + chord_str);
+
+		var str = this.replaceComment(chord_str);
+		if( str == ""){
+			console.log("chord_str: empty");
+			return "";
+		}
+		else{
+			var tones = Tones.parse(str);
+			console.log("chord_str: " + tones);
+			if(tones == null) return "";
+			else return tones.toChords({detail: true});
 		}
 	};
 
