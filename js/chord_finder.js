@@ -203,15 +203,17 @@ function getParameterByName(name, url) {
 	// ドミソなどの文字列をパースしTonesを返す
 	Tones.parse = function(str){
 		chord_str = str;
+		// 大文字英字のみに現れるbはフラットとして扱う
+		if(chord_str.match(/^[A-Gb]+$/)) chord_str = chord_str.replace(/b/g,"♭");
 		chord_str = chord_str.toLowerCase();
 		chord_str = chord_str.replace(/[＃♯﹟]/g, "#");
-		chord_str = chord_str.replace(/[ドＣｃ]|ﾄﾞ/g, "c");
-		chord_str = chord_str.replace(/[レﾚＤｄ]/g, "d");
-		chord_str = chord_str.replace(/[ミﾐＥｅ]/g, "e");
-		chord_str = chord_str.replace(/[Ｆｆ]|ファ|ﾌｧ/g, "f");
-		chord_str = chord_str.replace(/[ソｿＧｇ]/g, "g");
-		chord_str = chord_str.replace(/[ラﾗＡａ]/g, "a");
-		chord_str = chord_str.replace(/[シｼＢｂ]/g, "b");
+		chord_str = chord_str.replace(/[どドＣｃ]|ﾄﾞ/g, "c");
+		chord_str = chord_str.replace(/[れレﾚＤｄ]/g, "d");
+		chord_str = chord_str.replace(/[みミﾐＥｅ]/g, "e");
+		chord_str = chord_str.replace(/[Ｆｆ]|ふぁ|ファ|ﾌｧ/g, "f");
+		chord_str = chord_str.replace(/[そソｿＧｇ]/g, "g");
+		chord_str = chord_str.replace(/[らラﾗＡａ]/g, "a");
+		chord_str = chord_str.replace(/[しシｼＢｂ]/g, "b");
 		chord_str = chord_str.replace(/[^cdefgab♭#]+/g, "");
 		if(!chord_str) return null;
 		return new Tones(chord_str.match(/.[#♭]?/g));
