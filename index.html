@@ -27,11 +27,15 @@
 
       /* Main marketing message and sign up button */
       .jumbotron {
-        margin: 60px 0;
+        margin: 25px 0;
         text-align: center;
       }
       .jumbotron h1 {
-        font-size: 72px;
+        font-size: 50px;
+        line-height: 1;
+      }
+      .jumbotron h2 {
+        font-size: 26px;
         line-height: 1;
       }
       .jumbotron .btn {
@@ -39,9 +43,17 @@
         padding: 14px 24px;
       }
 
+      /* input */
+      #single_text_input {
+        height: 40px;
+        font-size: 22px;
+      }
+
+      /* result */
+
       /* Supporting marketing content */
       .marketing {
-        margin: 60px 0;
+        margin: 115px 0;
       }
       .marketing p + h4 {
         margin-top: 28px;
@@ -138,7 +150,7 @@
           <table class="table table-striped">
             <tr><th>コード</th><th>スコア</th></tr>
             <tbody>
-            <tr v-for="rec in findDetail(searchText)['result']"><td>{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
+            <tr v-for="rec in findDetail(searchText)['result']"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
             </tbody>
           </table>
         </div>
