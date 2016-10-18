@@ -291,7 +291,7 @@ eg#bdg
       var app_view = new Vue({
         el: '#app',
         data: {
-          searchText: '',
+          searchText: getParameterByName("text"),
           chord: ''
         },
         methods: {
@@ -308,21 +308,19 @@ eg#bdg
             $("#multi_input").show();
           },
           findDetail: function(text){
+            changeTitle(text);
             return ChordFinder.findDetail(text);
           }
-
         }
       })
 
       function initPage(){
-
-        var text = getParameterByName("text");
-        if(text && text != ""){
-          // $("#elements_list").val(text);
-          // $("#go_button").trigger("click");
-          app_view.searchText = text;
-          changeTitle(str);
-        }
+        // var text = getParameterByName("text");
+        // if(text){
+        //   // $("#elements_list").val(text);
+        //   // $("#go_button").trigger("click");
+        //   app_view.searchText = text;
+        // }
 
         // ランダムタグ
         new Vue({
@@ -351,6 +349,22 @@ eg#bdg
                   return ChordFinder.toneToKana(chord_str);
               }
           );
+      }
+
+      // ==========================================================
+      // Web Utility
+      // ==========================================================
+
+
+      // querystring
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
       }
 
       // タイトルとURL変更
