@@ -119,8 +119,9 @@ function randomSort(ary){
 					tmp_chord_ary.shift();
 					var r = find(tmp_chord_ary, map_type);
 					if(r != null){
-						r = r + "/" + root.toUpperCase();
-						res = [].concat(res || [], r);
+						res = [].concat(res || [], [].concat(r).map(function(e){
+							return e + "/" + root.toUpperCase();
+						}));
 					}
 					console.log({"rotate_and_onbase1": r})
 					var r = find_with_rotate(tmp_chord_ary, root, map_type);
