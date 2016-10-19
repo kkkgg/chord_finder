@@ -379,7 +379,11 @@ eg#bdg
           results: function(){
             var text = this.searchText || "";
             changeTitle(text);
-            return ChordFinder.findDetail(text)['result'];
+            var firstScore = null;
+            return (ChordFinder.findDetail(text)['result'] || []).filter(function(e){
+              if(firstScore == null) firstScore = e["score"];
+              return e["score"] > firstScore - 10;
+            });
           }
         }
       })

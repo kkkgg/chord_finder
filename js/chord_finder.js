@@ -106,7 +106,7 @@ function randomSort(ary){
 			var res = null;
 			["standard", "generated1", "generated2"].forEach(function(map_type){
 				// if(res != null) return;
-				if(res != null && map_type == "generated2") return;
+				// if(res != null && map_type == "generated2") return;
 
 				// 判定
 				var r = find(tones.tone_ary, map_type);
