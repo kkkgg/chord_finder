@@ -189,7 +189,14 @@
           <li id="tab-multi" role="presentation"><a v-on:click.stop="switchMulti">一括</a></li>
         </ul>
 
+
+
         <div id="single_input" class="form-group">
+          <div style="text-align: center">
+            <h1>「{{ searchText }}」のコード名は、</h1>
+            <h2>{{ results()[0]["chord"] }} です。</h2>
+          </div>
+
           <div class="aor">
             <input type="text" id="single_text_input" class="form-control" v-model="searchText"  placeholder="ファシ♭ド"  >
             <button type="button" class="fm" v-on:click="clear">

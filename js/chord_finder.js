@@ -586,6 +586,7 @@ function randomSort(ary){
 	// 文字列か文字列の配列で返る
 	function find_with_rotate(chord_ary, root, map_type){
 		var tmp_chord_ary = chord_ary.concat();
+		var reslist = [];
 		for(var i=0; i<tmp_chord_ary.length-1; i++){
 			tmp_chord_ary = rotateArray(tmp_chord_ary, 1);
 			var res = find(tmp_chord_ary, map_type);
@@ -593,15 +594,17 @@ function randomSort(ary){
 			if(res == null){
 			}
 			else if(res instanceof Array){
-				return res.map(function(e){
+				reslist = reslist.concat( res.map(function(e){
 					return e + "/" + root.toUpperCase();
-				});
+				}));
 			}
 			else{
-				return res + "/" + root.toUpperCase();
+				reslist.push( res + "/" + root.toUpperCase() );
 			}
 		}
-		return null;
+		if( reslist.length == 0) return null;
+		else if( reslist.length == 1) return reslist[0];
+		else return reslist;
 	}
 })(this);
 
