@@ -12,31 +12,37 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 20px;
-        padding-bottom: 40px;
+        padding-top: 50px;
+        padding-bottom: 20px;
       }
 
       /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 700px;
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
+      /* .container-narrow { */
+      /*   margin: 0 auto; */
+      /*   max-width: 700px; */
+      /* } */
+      /* .container-narrow > hr { */
+      /*   margin: 30px 0; */
+      /* } */
 
       /* Main marketing message and sign up button */
       .jumbotron {
-        margin: 25px 0;
         text-align: center;
+        padding-top: 10px;
       }
       .jumbotron h1 {
-        font-size: 50px;
+        font-size: 40px;
         line-height: 1;
+        margin-top: 15px;
       }
       .jumbotron h2 {
         font-size: 26px;
         line-height: 1;
+        margin-top: 8px;
+      }
+      .jumbotron p {
+        font-size: 18px;
+        margin-bottom: 0px;
       }
       .jumbotron .btn {
         font-size: 21px;
@@ -136,16 +142,40 @@
 
   <body>
 
-    <div class="container-narrow">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="index.html">Home</a></li>
-          <li><a href="http://ningenrikigaku.blogspot.jp/2016/10/blog-post.html" target="_blank">About</a></li>
-          <li><a href="https://github.com/kkkgg" target="_blank">Contact</a></li>
-        </ul>
-        <h3 class="muted">Chord Finder</h3>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">Chord Finder</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="http://ningenrikigaku.blogspot.jp/2016/10/blog-post.html" target="_blank">About</a></li>
+            <li><a href="https://github.com/kkkgg" target="_blank">Contact</a></li>
+            <!-- <li class="dropdown"> -->
+            <!--   <a href="#" class="dropdown&#45;toggle" data&#45;toggle="dropdown" role="button" aria&#45;haspopup="true" aria&#45;expanded="false">Dropdown <span class="caret"></span></a> -->
+            <!--   <ul class="dropdown&#45;menu"> -->
+            <!--     <li><a href="#">Action</a></li> -->
+            <!--     <li><a href="#">Another action</a></li> -->
+            <!--     <li><a href="#">Something else here</a></li> -->
+            <!--     <li role="separator" class="divider"></li> -->
+            <!--     <li class="dropdown&#45;header">Nav header</li> -->
+            <!--     <li><a href="#">Separated link</a></li> -->
+            <!--     <li><a href="#">One more separated link</a></li> -->
+            <!--   </ul> -->
+            <!-- </li> -->
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
+    </nav>
+
 
       <div class="jumbotron">
         <h1>Chord Finder</h1>
@@ -308,7 +338,6 @@ eg#bdg
           <td colspan="3" class="piano_lower_white"></td>
         </tr>
       </table>
-    </div> <!-- /container -->
 
     <!-- Le javascript
     ================================================== -->
