@@ -44,9 +44,27 @@
       }
 
       /* input */
-      #single_text_input {
-        height: 40px;
+      .aor {
+        position: relative;
+        margin: 30px;
         font-size: 22px;
+      }
+      .fm {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 9px 10px;
+        color: #b7bcc8;
+        border: 0;
+        line-height: 0;
+        background-color: transparent;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      #single_text_input {
+        font-size: 100%;
+        height: 40px;
+        width: 100%;
       }
 
       /* result */
@@ -99,8 +117,9 @@
         border-bottom: solid 0px black;
         width: 0.3em;
       }
+
     </style>
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- <link href="css/bootstrap&#45;responsive.css" rel="stylesheet"> -->
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -141,16 +160,20 @@
         </ul>
 
         <div id="single_input" class="form-group">
-          <div class="input-group">
-            <input type="text" id="single_text_input" class="form-control" v-model="searchText"  placeholder="ファシ♭ド" style="width:100%">
+          <div class="aor">
+            <input type="text" id="single_text_input" class="form-control" v-model="searchText"  placeholder="ファシ♭ド"  >
+            <button type="button" class="fm" v-on:click="clear">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
           </div>
+
           <ul class="help-block" style="text-align:left; list-style-type:none">
             <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
           </ul>
           <table class="table table-striped">
             <tr><th>コード</th><th>スコア</th></tr>
             <tbody>
-            <tr v-for="rec in findDetail(searchText)['result']"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
+            <tr v-for="rec in results()"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
             </tbody>
           </table>
         </div>
@@ -320,8 +343,14 @@ eg#bdg
             $("#multi_input").show();
           },
           findDetail: function(text){
+          },
+          clear: function(){
+            this.searchText = "";
+          },
+          results: function(){
+            var text = this.searchText || "";
             changeTitle(text);
-            return ChordFinder.findDetail(text);
+            return ChordFinder.findDetail(text)['result'];
           }
         }
       })
