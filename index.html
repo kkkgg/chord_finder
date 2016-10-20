@@ -11,6 +11,10 @@
     <!-- Le styles -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
+      [v-cloak]{
+        display:none
+      }
+
       body {
         padding-top: 50px;
         padding-bottom: 20px;
@@ -183,7 +187,7 @@
         <p class="lead">構成音からコード名を判定します。</p>
       </div>
 
-      <div id="app" style="[v-cloak]{display:none}">
+      <div id="app" v-cloak>
         <ul class="nav nav-tabs">
           <li id="tab-single" role="presentation" class="active"><a v-on:click.stop="switchSingle">個別</a></li>
           <li id="tab-multi" role="presentation"><a v-on:click.stop="switchMulti">一括</a></li>
