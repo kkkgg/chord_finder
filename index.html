@@ -183,18 +183,20 @@
         <p class="lead">構成音からコード名を判定します。</p>
       </div>
 
-      <div id="app">
+      <div id="app" style="[v-cloak]{display:none}">
         <ul class="nav nav-tabs">
           <li id="tab-single" role="presentation" class="active"><a v-on:click.stop="switchSingle">個別</a></li>
           <li id="tab-multi" role="presentation"><a v-on:click.stop="switchMulti">一括</a></li>
         </ul>
 
-
-
         <div id="single_input" class="form-group">
-          <div style="text-align: center">
-            <h1>「{{ searchText }}」のコード名は、</h1>
-            <h2>{{ results()[0]["chord"] }} です。</h2>
+          <div class="panel panel-primary" style="text-align: center; margin:60px" v-show="searchText">
+            <div class="panel-heading">
+              <h1 class=panel-title">「{{ searchText }}」のコード名は、</h1>
+            </div>
+            <div class="panel-body">
+              <h2>{{ results()[0]["chord"] }} です。</h2>
+            </div>
           </div>
 
           <div class="aor">
@@ -202,13 +204,15 @@
             <button type="button" class="fm" v-on:click="clear">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
+            <ul class="help-block" style="text-align:left; list-style-type:none; font-size:63%;padding-left:0">
+              <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
+            </ul>
           </div>
 
-          <ul class="help-block" style="text-align:left; list-style-type:none">
-            <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
-          </ul>
           <table class="table table-striped">
-            <tr><th>コード</th><th>スコア</th></tr>
+            <thead>
+              <tr><th>コード名</th><th>スコア</th></tr>
+            </thead>
             <tbody>
             <tr v-for="rec in results()"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
             </tbody>

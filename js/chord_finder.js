@@ -205,7 +205,7 @@ function randomSort(ary){
 	Tones.parse = function(str){
 		chord_str = str;
 		// 大文字英字のみに現れるbはフラットとして扱う
-		if(chord_str.match(/^[A-Gb]+$/)) chord_str = chord_str.replace(/b/g,"♭");
+		if(chord_str.match(/^[A-G][A-Gb]*$/)) chord_str = chord_str.replace(/b/g,"♭");
 		chord_str = chord_str.toLowerCase();
 		chord_str = chord_str.replace(/[＃♯﹟]/g, "#");
 		chord_str = chord_str.replace(/[どドＣｃ]|ﾄﾞ/g, "c");
