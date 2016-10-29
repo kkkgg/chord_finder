@@ -209,16 +209,16 @@
               <h1 class=panel-title" style="font-size:1.9em">「{{ searchText }}」<span style="font-size:0.8em">のコード名は</span></h1>
             </div>
             <div class="panel-body">
-              <h2>{{ results()[0]["chord"] }} です。</h2>
+              <h2>{{ results[0] ? results[0]["chord"] : "" }} です。</h2>
             </div>
           </div>
 
-          <table class="table table-striped">
+          <table class="table table-striped" v-show="presentSingleResult">
             <thead>
               <tr><th>コード名</th><th>スコア</th></tr>
             </thead>
             <tbody>
-            <tr v-for="rec in results()"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
+            <tr v-for="rec in results"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
             </tbody>
           </table>
         </div>
@@ -337,7 +337,6 @@
         data: {
           // single
           searchText: getParameterByName("text"),
-          chord: '',
 
           // multi
           multiText: "" +
@@ -388,8 +387,14 @@
           multiResults: []
         },
         computed: {
+          results: function(){
+            return this.resultsSingle();
+          },
           presentMultiResult: function(){
             return this.multiResults.length > 0;
+          },
+          presentSingleResult: function(){
+            return this.results.length > 0;
           }
         },
         methods: {
@@ -407,12 +412,11 @@
           },
 
           // single
-          findDetail: function(text){
-          },
           clear: function(){
             this.searchText = "";
+            changeTitle(text);
           },
-          results: function(){
+          resultsSingle: function(){
             var text = this.searchText || "";
             changeTitle(text);
             var firstScore = null;
@@ -445,23 +449,27 @@
         }
       });
 
-      function initPage(){
-        // var text = getParameterByName("text");
-        // if(text){
-        //   // $("#elements_list").val(text);
-        //   // $("#go_button").trigger("click");
-        //   app_view.searchText = text;
-        // }
-
-        // ランダムタグ
-        new Vue({
-          el: '#tags',
-          data: {
-            tags: randomChordStrArray().map(function(e){
+      // ランダムタグ
+      var tags_vue = new Vue({
+        el: '#tags',
+        data: {
+          tags: [],
+        },
+        methods: {
+          setTags: function(){
+            this.tags = randomChordStrArray().map(function(e){
               return { name: e }
-            })
+            });
           }
-        })
+        },
+        ready: function(){
+          this.setTags();
+        }
+      })
+
+      // ページ内遷移での初期化
+      function initPage(){
+        tags_vue.setTags();
       }
 
       function randomChordStrArray(){
