@@ -2,41 +2,43 @@
 // Utility
 // ==========================================================
 
-// min から max までの乱整数を返す関数
-// Math.round() を用いると、非一様分布になります!
-function getRandomInt(min, max) {
-  return Math.floor( Math.random() * (max - min + 1) ) + min;
-}
+(function(global){
+	// min から max までの乱整数を返す関数
+	// Math.round() を用いると、非一様分布になります!
+	global.getRandomInt = function(min, max) {
+	  return Math.floor( Math.random() * (max - min + 1) ) + min;
+	};
 
-// 回転
-// 非破壊的
-function rotateArray(arr, num, reverse){
-	var resary = arr.concat();
-	for(var i=0; i<num; i++){
-		if(reverse)
-			resary.unshift(resary.pop());
-		else
-			resary.push(resary.shift());
+	// 回転
+	// 非破壊的
+	global.rotateArray = function(arr, num, reverse){
+		var resary = arr.concat();
+		for(var i=0; i<num; i++){
+			if(reverse)
+				resary.unshift(resary.pop());
+			else
+				resary.push(resary.shift());
+		}
+		return resary;
 	}
-	return resary;
-}
 
-// ユニーク
-// 非破壊的
-function uniqArray(arr){
-	return arr.filter(function (x, i, self) {
-		return self.indexOf(x) === i;
-	});
-}
+	// ユニーク
+	// 非破壊的
+	global.uniqArray = function(arr){
+		return arr.filter(function (x, i, self) {
+			return self.indexOf(x) === i;
+		});
+	}
 
-// 配列ランダムソート
-function randomSort(ary){
-	return ary.sort(function (a,b){
-		var i = Math.ceil(Math.random()*100)%2;
-		if(i == 0){return -1;}
-		else{return 1;}
-	});
-}
+	// 配列ランダムソート
+	global.randomSort = function(ary){
+		return ary.sort(function (a,b){
+			var i = Math.ceil(Math.random()*100)%2;
+			if(i == 0){return -1;}
+			else{return 1;}
+		});
+	}
+})(this["window"] || exports);
 
 // ==========================================================
 // Body
@@ -814,4 +816,4 @@ function randomSort(ary){
 	// test();
 	// test_stdin();
 	// generateChord();
-})(this);
+})(this["window"] || exports);
