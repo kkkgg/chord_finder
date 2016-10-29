@@ -247,7 +247,10 @@
                   <tr><th>構成音</th><th>コード名</th></tr>
                 </thead>
                 <tbody>
-                <tr v-for="rec in multiResults" class="{{rec['class']}}"><td>{{rec["notes"]}}</td><td>{{rec["chord"]}}</td></tr>
+                  <tr v-for="rec in multiResults" class="{{rec['class']}}">
+                    <td><a href="index.html?text={{ encodeURIComponent(rec['notes']) }}" target="_blank")>{{rec["notes"]}}</a></td>
+                    <td>{{rec["chord"]}}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
