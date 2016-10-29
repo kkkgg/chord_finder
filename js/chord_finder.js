@@ -5,13 +5,14 @@
 (function(global){
 	// min から max までの乱整数を返す関数
 	// Math.round() を用いると、非一様分布になります!
-	global.getRandomInt = function(min, max) {
+	var getRandomInt = global.getRandomInt = function(min, max) {
 	  return Math.floor( Math.random() * (max - min + 1) ) + min;
 	};
 
 	// 回転
 	// 非破壊的
-	global.rotateArray = function(arr, num, reverse){
+	var rotateArray = global.rotateArray = function(arr, num, reverse){
+		if(num == null) num = 1;
 		var resary = arr.concat();
 		for(var i=0; i<num; i++){
 			if(reverse)
@@ -24,27 +25,25 @@
 
 	// ユニーク
 	// 非破壊的
-	global.uniqArray = function(arr){
+	var uniqArray = global.uniqArray = function(arr){
 		return arr.filter(function (x, i, self) {
 			return self.indexOf(x) === i;
 		});
 	}
 
 	// 配列ランダムソート
-	global.randomSort = function(ary){
+	var randomSort = global.randomSort = function(ary){
 		return ary.sort(function (a,b){
 			var i = Math.ceil(Math.random()*100)%2;
 			if(i == 0){return -1;}
 			else{return 1;}
 		});
 	}
-})(this["window"] || exports);
 
-// ==========================================================
-// Body
-// ==========================================================
+	// ==========================================================
+	// Body
+	// ==========================================================
 
-(function(global){
 	// ♪♩♫♬
 	// 現状は["a","c","e"]のような配列を受け取る
 	var Tones = global.Tones = function (val){
@@ -634,14 +633,11 @@
 		else if( reslist.length == 1) return reslist[0];
 		else return reslist;
 	}
-})(this);
 
+	// ==========================================================
+	// Test
+	// ==========================================================
 
-// ==========================================================
-// Test
-// ==========================================================
-
-(function(global){
 	// Test Utility
 	
 	// 組み合わせ計算
@@ -722,24 +718,20 @@
 	}
 
 	// 渡されたサイズの構成音の全通りを出力
-	function generateChord(){
-		var tones = [
-			"c",
-			"c#",
-			"d",
-			"d#",
-			"e",
-			"f",
-			"f#",
-			"g",
-			"g#",
-			"a",
-			"a#",
-			"b",
-		];
+	ChordFinder.generateChord = function(num, sign, lang){
+		if(num == null) num = 2;
+		if(!sign) sign = "#";
+		var tones = this.getToneNames(sign);
+		var self = this;
 		// 組み合わせ
-		k_combinations(tones, parseInt(process.argv[2] || "2")).forEach( function(e){
-			console.log( e.join("") );
+		k_combinations(tones, num).forEach( function(notes){
+			var n = notes;
+			// 転回
+			notes.forEach( function(){
+				if(lang == 'kana') console.log( self.toneToKana(n.join("")) );
+				else console.log( n.join(" ").toUpperCase() );
+				n = rotateArray(n);
+			});
 		});
 
 		// 順列
@@ -768,7 +760,7 @@
 	}
 
 
-	function test_stdin(){
+	ChordFinder.stdin = function(){
 		var util = require( 'util' );
 		var stream = require( 'stream' );
 		var Transform = stream.Transform;
@@ -812,8 +804,4 @@
 			console.log( res );
 		});
 	}
-
-	// test();
-	// test_stdin();
-	// generateChord();
 })(this["window"] || exports);
