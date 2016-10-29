@@ -157,7 +157,7 @@ function randomSort(ary){
 							// (9)などの追加系テンション
 							[/\([+-]?\d+\)/g, 5],
 							// +-tension, add
-							[/aug|6|[+-]\d+|add\d+|sus2/g, 4],
+							[/aug|6|5|[+-]\d+|add\d+|sus2/g, 4],
 							// 9, 11, 13, onbase
 							[/dim7|11|13|\/.+$|9/g, 3],
 							// 7, M7, sus4
@@ -289,6 +289,9 @@ function randomSort(ary){
 		// フラットを-でなくフラットにする場合の影響先
 		// scoreの正規表現、D♭5は括弧をつけないとあいまい
 		return {
+			// 三以下の和音
+			"0,7": "5",
+
 			// 三和音
 			"0,4,7": "",
 			"0,3,7": "m",
@@ -442,9 +445,9 @@ function randomSort(ary){
 		];
 		// 3
 		var third_ary = [
-			[null, "omit3"], // omitの場合表記は末尾っぽい
+			[null, "(omit3)"], // omitの場合表記は末尾っぽい
 			// [1, "sus-2"],
-			// [2, "sus2"],
+			[2, "sus2"],
 			[3, "m"],
 			[4, ""],
 			[5, "sus4"],
@@ -452,7 +455,7 @@ function randomSort(ary){
 
 		// 5
 		var fifth_ary = [
-			[null, "omit5"],
+			[null, "(omit5)"],
 			[6, "-5"],
 			[7, ""],
 			[8, "+5"],
@@ -501,14 +504,14 @@ function randomSort(ary){
 		tmp_ary = productArray(root_ary, third_ary);
 		tmp_ary = productArray(tmp_ary, seventh_ary);
 		// sus4は3thより表記が後
-		tmp_ary = moveToTail(tmp_ary, /(sus4)/g);
+		tmp_ary = moveToTail(tmp_ary, /(sus\d)/g);
 		// 5thは7thより表記が後
 		tmp_ary = productArray(tmp_ary, fifth_ary);
 		tension_ary.forEach(function(e){
 			tmp_ary = productArray(tmp_ary, [[null, ""], e]);
 		});
 		// omitは表記が最後
-		tmp_ary = moveToTail(tmp_ary, /(omit\d)/g);
+		tmp_ary = moveToTail(tmp_ary, /(\(omit\d\))/g);
 
 		return tmp_ary;
 	}
