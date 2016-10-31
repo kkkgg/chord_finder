@@ -87,6 +87,30 @@
         margin-top: 28px;
       }
 
+      @media (min-width: 768px)
+      .container {
+          width: 750px;
+      }
+
+      .container {
+          padding-right: 15px;
+          padding-left: 15px;
+          margin-right: auto;
+          margin-left: auto;
+      }
+      
+      .row{
+        margin-right: -15px;
+        margin-left: -15px;
+      }
+
+      .col-md-4{
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+
       /* piano */
       .piano_table *{
         font-size: 30px;
@@ -215,12 +239,16 @@
 
           <table class="table table-striped" v-show="presentSingleResult">
             <thead>
-              <tr><th>コード名</th><th>スコア</th></tr>
+              <tr><th>該当するコード名</th><th>スコア</th></tr>
             </thead>
             <tbody>
             <tr v-for="rec in results"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
             </tbody>
           </table>
+          <ul class="help-block" style="text-align:left; list-style-type:none">
+            <li>※どのコード名も同じ構成音になります。</li>
+            <li>※スコアは単純で一般的なほど高くなります。</li>
+          </ul>
         </div>
 
         <div id="multi_input" class="form-group" style="display:none;text-align:center">
@@ -260,22 +288,30 @@
 
       <hr>
 
-      <div class="row-fluid marketing" >
-        <div class="span6">
+      <div class="row" >
+        <div class="col-md-4">
           <h4>開発目的と用途</h4>
           <p>このアプリは与えられた構成音からコード名を判定するためのツールです。</p>
           <p>耳コピや作曲・編曲などでにおけるコード譜の採譜で、不明な和音に出くわしたとき、それを解決することを意図しています。</p>
           <p>響きを大切にするため、へたに類似コードや近似の簡単コードに略さず、正確性と伝達性のバランスをとったものを目指しています。</p>
           <p>和音判定ツール、コード名逆引きツールとして使えます</p>
+          <p>未知のボイシング、偶然出会った素晴らしい響きをコードネームにすれば、演奏者へ伝えることができます。</p>
+          <!-- <p>押さえたギターコードやピアノコードのどれにわからない 記譜 判断、chord name</p> -->
+
           <h4>オンコード(分数コード)対応</h4>
           <p>オンコードに対応したよいコード判別機が見つからなかったため、開発しました。</p>
         </div>
 
-        <div class="span6">
+        <div class="col-md-4">
           <h4>オンコードとコード譜</h4>
           <p>コード譜のように楽曲を和声の流れとしてとらえる場合は、ベース音が肝になるため、正しいベース音を付与したコードで採譜する必要があります。</p>
           <p>例えば曲の流れの中で出現する低い方からのレドミソをCadd9と採譜してしまうと、原曲とは響きが異なるものになります。</p>
           <p>この場合のレドミソは、ベースを加味してC/Dが正解となります。</p>
+        </div>
+
+        <div class="col-md-4">
+          <h4>特徴</h4>
+          <p>どんな音の組み合わせでもコード名に変換します。</p>
         </div>
       </div>
 
