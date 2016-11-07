@@ -571,6 +571,7 @@
         document.title = title;
         history.pushState(null, title, url);
         // GA
+        ga('set', 'page', url);
         ga('send', 'pageview');
       }
 
