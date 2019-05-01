@@ -5,52 +5,38 @@
     <meta charset="utf-8">
     <title>和音判定ツール Chord Finder &middot; 構成音からコード名を判定</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
+    <meta name="description" content="コード名検索アプリです。構成音からコード名をはんていします。">
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap4.4.1/bootstrap.min.css" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.11.2/js/all.js"></script>
     <style type="text/css">
       [v-cloak]{
         display:none
       }
 
       body {
-        padding-top: 50px;
-        padding-bottom: 20px;
+        padding-top: 3.5rem;
       }
 
-      /* Custom container */
-      /* .container-narrow { */
-      /*   margin: 0 auto; */
-      /*   max-width: 700px; */
-      /* } */
-      /* .container-narrow > hr { */
-      /*   margin: 30px 0; */
-      /* } */
-
-      /* Main marketing message and sign up button */
       .jumbotron {
         text-align: center;
-        padding-top: 10px;
+        padding: 1rem 1rem;
+        margin-bottom: 1rem;
       }
       .jumbotron h1 {
-        font-size: 40px;
-        line-height: 1;
-        margin-top: 15px;
-      }
-      .jumbotron h2 {
-        font-size: 26px;
-        line-height: 1;
-        margin-top: 8px;
+        font-size: 2rem;
       }
       .jumbotron p {
-        font-size: 18px;
-        margin-bottom: 0px;
+        font-size: 1rem;
       }
-      .jumbotron .btn {
-        font-size: 21px;
-        padding: 14px 24px;
+
+      #app {
+        margin-bottom: 5rem;
+      }
+      .mode-tabs {
+        margin-bottom: 1rem;
       }
 
       /* input */
@@ -59,6 +45,7 @@
         margin: 30px;
         font-size: 22px;
       }
+
       .fm {
         position: absolute;
         top: 0;
@@ -71,44 +58,31 @@
         box-shadow: none;
         border-radius: 0;
       }
+
       #single_text_input {
         font-size: 100%;
         height: 40px;
         width: 100%;
       }
 
-      /* result */
-
-      /* Supporting marketing content */
-      .marketing {
-        margin: 115px 0;
-      }
-      .marketing p + h4 {
-        margin-top: 28px;
+      /* site description */
+      .site-desc {
+        margin-bottom: 2rem;
       }
 
-      @media (min-width: 768px)
-      .container {
-          width: 750px;
+      .site-desc .row {
+        margin-top: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
       }
 
-      .container {
-          padding-right: 15px;
-          padding-left: 15px;
-          margin-right: auto;
-          margin-left: auto;
-      }
-      
-      .row{
-        margin-right: -15px;
-        margin-left: -15px;
+      .col-md-4 h4 {
+        margin-bottom: 2rem;
       }
 
-      .col-md-4{
-        position: relative;
-        min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
+      #tags  {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
       }
 
       /* piano */
@@ -177,86 +151,68 @@
   </head>
 
   <body>
-
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html">Chord Finder</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="index.html">Home</a></li>
-            <li><a href="http://ningenrikigaku.blogspot.jp/2016/10/blog-post.html" target="_blank">About</a></li>
-            <li><a href="https://github.com/kkkgg" target="_blank">Contact</a></li>
-            <!-- <li class="dropdown"> -->
-            <!--   <a href="#" class="dropdown&#45;toggle" data&#45;toggle="dropdown" role="button" aria&#45;haspopup="true" aria&#45;expanded="false">Dropdown <span class="caret"></span></a> -->
-            <!--   <ul class="dropdown&#45;menu"> -->
-            <!--     <li><a href="#">Action</a></li> -->
-            <!--     <li><a href="#">Another action</a></li> -->
-            <!--     <li><a href="#">Something else here</a></li> -->
-            <!--     <li role="separator" class="divider"></li> -->
-            <!--     <li class="dropdown&#45;header">Nav header</li> -->
-            <!--     <li><a href="#">Separated link</a></li> -->
-            <!--     <li><a href="#">One more separated link</a></li> -->
-            <!--   </ul> -->
-            <!-- </li> -->
-          </ul>
-        </div><!--/.nav-collapse -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="index.html">Chord Finder</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active"> <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a> </li>
+          <li class="nav-item"> <a class="nav-link" href="http://ningenrikigaku.blogspot.jp/2016/10/blog-post.html" target="_blank">About</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="https://github.com/kkkgg" target="_blank">Contact</a> </li>
+        </ul>
       </div>
     </nav>
 
-
-      <div class="jumbotron">
-        <h1>Chord Finder</h1>
-        <h2>コード名検索アプリ</h2>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>コード名検索</h1>
         <p class="lead">構成音からコード名を判定します。</p>
       </div>
+    </div>
 
+    <div class="container">
       <div id="app" v-cloak>
-        <ul class="nav nav-tabs">
-          <li id="tab-single" role="presentation" class="active"><a v-on:click.stop="switchSingle">個別</a></li>
-          <li id="tab-multi" role="presentation"><a v-on:click.stop="switchMulti">一括</a></li>
+        <ul class="mode-tabs nav nav-tabs">
+          <li id="tab-single" role="presentation" class="nav-item"><a class="nav-link active" v-on:click.stop="switchSingle">個別</a></li>
+          <li id="tab-multi" role="presentation" class="nav-item"><a class="nav-link" v-on:click.stop="switchMulti">一括</a></li>
         </ul>
 
         <div id="single_input" class="form-group">
           <div class="aor">
             <input type="text" id="single_text_input" class="form-control" v-model="searchText"  placeholder="ファシ♭ド"  >
             <button type="button" class="fm" v-on:click="clear">
-              <span class="glyphicon glyphicon-remove"></span>
+              <i class="fas fa-times"></i>
             </button>
             <ul class="help-block" style="text-align:left; list-style-type:none; font-size:63%;padding-left:0">
-              <li>※低い音から順に構成音を記述します。レファ#ラでもdf#aでもOK</li>
+              <li>※低い音から順に構成音を入力します。 例： ソ♭シド、れふぁ#ら、 AbCEb</li>
             </ul>
           </div>
 
-          <div class="panel panel-primary" style="text-align: center; margin:30px" v-show="searchText">
-            <div class="panel-heading">
-              <h1 class=panel-title" style="font-size:1.9em">「{{ searchText }}」<span style="font-size:0.8em">のコード名は</span></h1>
+          <div class="result" v-show="presentSingleResult">
+            <div class="card text-white bg-primary mb-3" style="text-align: center; margin:30px" v-show="searchText">
+              <div class="card-header">
+                「{{ searchText }}」<span style="">のコード名は</span>
+              </div>
+              <div class="card-body">
+                <h2 "card-title">{{ results[0] ? results[0]["chord"] : "" }} です。</h2>
+              </div>
             </div>
-            <div class="panel-body">
-              <h2>{{ results[0] ? results[0]["chord"] : "" }} です。</h2>
-            </div>
-          </div>
 
-          <table class="table table-striped" v-show="presentSingleResult">
-            <thead>
-              <tr><th>該当するコード名</th><th>スコア</th></tr>
-            </thead>
-            <tbody>
-            <tr v-for="rec in results"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
-            </tbody>
-          </table>
-          <ul class="help-block" style="text-align:left; list-style-type:none">
-            <li>※どのコード名も同じ構成音になります。</li>
-            <li>※スコアは単純で一般的なほど高くなります。</li>
-          </ul>
+            <table class="table table-striped">
+              <thead>
+                <tr><th>該当するコード名</th><th>スコア</th></tr>
+              </thead>
+              <tbody>
+              <tr v-for="rec in results"><td class="">{{rec["chord"]}}</td><td>{{rec["score"]}}</td></tr>
+              </tbody>
+            </table>
+            <ul class="help-block" style="text-align:left; list-style-type:none">
+              <li>※どのコード名も同じ構成音になります。</li>
+              <li>※スコアは単純で一般的なほど高くなります。</li>
+            </ul>
+          </div>
         </div>
 
         <div id="multi_input" class="form-group" style="display:none;text-align:center">
@@ -293,9 +249,11 @@
           </div>
         </div>
       </div>
+    </div>
 
+
+    <div class="site-desc container">
       <hr>
-
       <div class="row" >
         <div class="col-md-4">
           <h4>開発目的と用途</h4>
@@ -305,13 +263,11 @@
           <p>和音判定ツール、コード名逆引きツールとして使えます</p>
           <p>未知のボイシング、偶然出会った素晴らしい響きをコードネームにすれば、演奏者へ伝えることができます。</p>
           <!-- <p>押さえたギターコードやピアノコードのどれにわからない 記譜 判断、chord name</p> -->
-
-          <h4>オンコード(分数コード)対応</h4>
-          <p>オンコードに対応したよいコード判別機が見つからなかったため、開発しました。</p>
         </div>
 
         <div class="col-md-4">
-          <h4>オンコードとコード譜</h4>
+          <h4>オンコード (分数コード) 対応</h4>
+          <p>オンコードに対応したよいコード判別機が見つからなかったため、開発しました。</p>
           <p>コード譜のように楽曲を和声の流れとしてとらえる場合は、ベース音が肝になるため、正しいベース音を付与したコードで採譜する必要があります。</p>
           <p>例えば曲の流れの中で出現する低い方からのレドミソをCadd9と採譜してしまうと、原曲とは響きが異なるものになります。</p>
           <p>この場合のレドミソは、ベースを加味してC/Dが正解となります。</p>
@@ -322,9 +278,11 @@
           <p>どんな音の組み合わせでもコード名に変換します。</p>
         </div>
       </div>
+    </div>
 
+
+    <div class="other-codes container">
       <hr>
-
       <div id="tags" v-cloak>
         <h4>他のコード名を調べる</h4>
         <ul>
@@ -365,12 +323,13 @@
           <td colspan="3" class="piano_lower_white"></td>
         </tr>
       </table>
+    </div>
 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap4.4.1/bootstrap.min.js"></script>
     <script src="js/vue.js"></script>
     <script src="js/chord_finder.js"></script>
     <script>
@@ -446,14 +405,14 @@
         },
         methods: {
           switchSingle: function(){
-            $("#tab-multi").removeClass("active");
-            $("#tab-single").addClass("active");
+            $("#tab-multi a").removeClass("active");
+            $("#tab-single a").addClass("active");
             $("#multi_input").hide();
             $("#single_input").show();
           },
           switchMulti: function(){
-            $("#tab-single").removeClass("active");
-            $("#tab-multi").addClass("active");
+            $("#tab-single a").removeClass("active");
+            $("#tab-multi a").addClass("active");
             $("#single_input").hide();
             $("#multi_input").show();
           },
