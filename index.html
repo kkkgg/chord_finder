@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>和音判定ツール Chord Finder &middot; 構成音からコード名を判定</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="コード名検索アプリです。構成音からコード名をはんていします。">
+    <meta name="description" content="コード名検索アプリです。構成音からコード名を判定します。">
     <meta name="author" content="">
 
     <!-- Le styles -->
@@ -540,7 +540,7 @@
 
       // タイトルとURL変更
       function changeTitle(str){
-        var $title = $("title");
+        var $title = $("head title");
         str = ChordFinder.replaceComment(str);
         if(! $title.prop("original_title")) $title.prop("original_title", $title.text());
         var title;
